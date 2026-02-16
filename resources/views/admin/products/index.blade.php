@@ -1,3 +1,7 @@
+@php
+    $canManage = auth()->user()->isAdmin();
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <div>
@@ -7,8 +11,8 @@
         <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <form method="GET" action="{{ route('admin.products.index') }}" class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                 <input type="hidden" name="per_page" value="{{ $perPage }}">
-                <div class="relative w-full sm:w-[320px]">
-                    <span class="pointer-events-none absolute inset-y-0 right-3 inline-flex items-center text-moka-muted">
+                <div class="relative w-full sm:w-[360px]">
+                    <span class="pointer-events-none absolute inline-flex items-center text-moka-muted" style="right: 0.75rem; top: 50%; transform: translateY(-50%);">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"></path>
                             <circle cx="11" cy="11" r="6" stroke-width="1.8"></circle>
@@ -17,9 +21,9 @@
                     <input
                         id="q"
                         name="q"
-                        type="search"
+                        type="text"
                         value="{{ $search }}"
-                        class="moka-input pr-10"
+                        class="moka-input appearance-none pl-4 pr-10 text-left"
                         placeholder="cari data"
                     >
                 </div>
@@ -29,7 +33,9 @@
                 @endif
             </form>
 
-            <a href="{{ route('admin.products.create') }}" class="moka-btn">Tambah Produk</a>
+            @if($canManage)
+                <a href="{{ route('admin.products.create') }}" class="moka-btn">Tambah Produk</a>
+            @endif
         </div>
     </x-slot>
 
@@ -105,7 +111,9 @@
                             <th>Harga</th>
                             <th>Stok</th>
                             <th>Status</th>
-                            <th class="text-center">Aksi</th>
+                            @if($canManage)
+                                <th class="text-center">Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -127,18 +135,20 @@
                                         {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
                                     </x-ui.badge>
                                 </td>
-                                <td class="text-center">
-                                    <a href="{{ route('admin.products.edit', $product) }}" class="text-sm font-semibold text-moka-primary hover:text-moka-ink">Edit</a>
-                                    <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline-block" x-ref="deleteForm{{ $product->id }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="ml-3 text-sm font-semibold text-red-600 hover:text-red-700" @click.prevent="openDelete($refs.deleteForm{{ $product->id }}, @js($product->name))">Hapus</button>
-                                    </form>
-                                </td>
+                                @if($canManage)
+                                    <td class="text-center">
+                                        <a href="{{ route('admin.products.edit', $product) }}" class="text-sm font-semibold text-moka-primary hover:text-moka-ink">Edit</a>
+                                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline-block" x-ref="deleteForm{{ $product->id }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="ml-3 text-sm font-semibold text-red-600 hover:text-red-700" @click.prevent="openDelete($refs.deleteForm{{ $product->id }}, @js($product->name))">Hapus</button>
+                                        </form>
+                                    </td>
+                                @endif
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="py-10 text-center text-sm text-moka-muted">Belum ada produk.</td>
+                                <td colspan="{{ $canManage ? 8 : 7 }}" class="py-10 text-center text-sm text-moka-muted">Belum ada produk.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -184,14 +194,16 @@
                             <p class="font-display text-xl font-bold text-moka-primary text-money">Rp {{ number_format((float) $product->price, 0, ',', '.') }}</p>
                             <p class="text-xs text-moka-muted text-money">Modal: Rp {{ number_format((float) $product->cost_price, 0, ',', '.') }}</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.products.edit', $product) }}" class="moka-btn-secondary px-4">Edit</a>
-                            <form action="{{ route('admin.products.destroy', $product) }}" method="POST" x-ref="deleteCardForm{{ $product->id }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="moka-btn-danger px-4" @click.prevent="openDelete($refs.deleteCardForm{{ $product->id }}, @js($product->name))">Hapus</button>
-                            </form>
-                        </div>
+@if($canManage)
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('admin.products.edit', $product) }}" class="moka-btn-secondary px-4">Edit</a>
+                                <form action="{{ route('admin.products.destroy', $product) }}" method="POST" x-ref="deleteCardForm{{ $product->id }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="moka-btn-danger px-4" @click.prevent="openDelete($refs.deleteCardForm{{ $product->id }}, @js($product->name))">Hapus</button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
                 </x-ui.card>
             @empty
@@ -206,25 +218,27 @@
         {{ $products->links() }}
     </div>
 
-    <x-ui.modal name="deleteOpen" maxWidth="md">
-        <div class="moka-modal-content">
-            <div class="moka-modal-header">
-                <div>
-                    <h3 class="moka-modal-title">Konfirmasi Hapus</h3>
-                    <p class="moka-modal-subtitle">Hapus <span class="font-semibold" x-text="deleteLabel"></span>?</p>
+    @if($canManage)
+        <x-ui.modal name="deleteOpen" maxWidth="md">
+            <div class="moka-modal-content">
+                <div class="moka-modal-header">
+                    <div>
+                        <h3 class="moka-modal-title">Konfirmasi Hapus</h3>
+                        <p class="moka-modal-subtitle">Hapus <span class="font-semibold" x-text="deleteLabel"></span>?</p>
+                    </div>
+                    <button type="button" class="moka-modal-close" @click="deleteOpen = false" aria-label="Tutup popup">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M6 6l12 12M18 6l-12 12" stroke-width="1.8" stroke-linecap="round"></path>
+                        </svg>
+                    </button>
                 </div>
-                <button type="button" class="moka-modal-close" @click="deleteOpen = false" aria-label="Tutup popup">
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M6 6l12 12M18 6l-12 12" stroke-width="1.8" stroke-linecap="round"></path>
-                    </svg>
-                </button>
+                <div class="moka-modal-footer">
+                    <button type="button" class="moka-btn-secondary" @click="deleteOpen = false">Batal</button>
+                    <button type="button" class="moka-btn-danger" @click="confirmDelete()">Hapus</button>
+                </div>
             </div>
-            <div class="moka-modal-footer">
-                <button type="button" class="moka-btn-secondary" @click="deleteOpen = false">Batal</button>
-                <button type="button" class="moka-btn-danger" @click="confirmDelete()">Hapus</button>
-            </div>
-        </div>
-    </x-ui.modal>
+        </x-ui.modal>
+    @endif
 </x-app-layout>
 
 

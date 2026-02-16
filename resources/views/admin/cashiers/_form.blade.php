@@ -14,6 +14,7 @@
         <select id="role" name="role" class="moka-select mt-1 block w-full" required>
             <option value="{{ \App\Models\User::ROLE_KASIR }}" @selected(old('role', $cashier->role ?? \App\Models\User::ROLE_KASIR) === \App\Models\User::ROLE_KASIR)>Kasir</option>
             <option value="{{ \App\Models\User::ROLE_WAITER }}" @selected(old('role', $cashier->role ?? \App\Models\User::ROLE_KASIR) === \App\Models\User::ROLE_WAITER)>Waiter</option>
+            <option value="{{ \App\Models\User::ROLE_MANAGER }}" @selected(old('role', $cashier->role ?? \App\Models\User::ROLE_KASIR) === \App\Models\User::ROLE_MANAGER)>Manager</option>
         </select>
         <x-input-error :messages="$errors->get('role')" class="mt-1" />
     </div>

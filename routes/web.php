@@ -16,7 +16,7 @@ Route::get('/', function () {
         return redirect()->route('login');
     }
 
-    if (auth()->user()->isAdmin()) {
+    if (auth()->user()->canAccessAdminPanel()) {
         return redirect()->route('admin.reports.index');
     }
 
@@ -59,11 +59,11 @@ Route::middleware(['auth', 'role:waiter'])
         Route::get('/history/{order}', [WaiterController::class, 'show'])->name('show');
     });
 
-Route::middleware(['auth', 'role:admin|kasir'])->group(function () {
+Route::middleware(['auth', 'role:admin|manager|kasir'])->group(function () {
     Route::get('/orders/{order}/receipt', [PosController::class, 'receipt'])->name('orders.receipt');
 });
 
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', 'role:admin|manager'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -71,16 +71,27 @@ Route::middleware(['auth', 'role:admin'])
             return redirect()->route('admin.reports.index');
         })->name('index');
 
-        Route::resource('categories', CategoryController::class)->except(['show']);
-        Route::resource('products', ProductController::class)->except(['show']);
-        Route::resource('payment-methods', PaymentMethodController::class)->except(['show']);
-        Route::resource('cashiers', CashierController::class)->except(['show']);
+        Route::resource('categories', CategoryController::class)->only(['index', 'create', 'edit']);
+        Route::resource('products', ProductController::class)->only(['index', 'create', 'edit']);
+        Route::resource('payment-methods', PaymentMethodController::class)->only(['index', 'create', 'edit']);
+        Route::resource('cashiers', CashierController::class)->only(['index', 'create', 'edit']);
 
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    });
+
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::resource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('payment-methods', PaymentMethodController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('cashiers', CashierController::class)->only(['store', 'update', 'destroy']);
+
         Route::post('/orders/{order}/void', [AdminOrderController::class, 'void'])->name('orders.void');
     });
 

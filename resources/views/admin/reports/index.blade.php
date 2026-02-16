@@ -1,3 +1,7 @@
+@php
+    $isAdmin = auth()->user()->isAdmin();
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <div>
@@ -18,7 +22,9 @@
             </div>
             <div class="md:col-span-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-end">
                 <button type="submit" class="moka-btn">Terapkan Filter</button>
-                <a href="{{ route('admin.reports.export', ['from' => $from, 'to' => $to]) }}" class="moka-btn-secondary">Export CSV</a>
+                @if($isAdmin)
+                    <a href="{{ route('admin.reports.export', ['from' => $from, 'to' => $to]) }}" class="moka-btn-secondary">Export CSV</a>
+                @endif
             </div>
         </form>
     </x-ui.card>

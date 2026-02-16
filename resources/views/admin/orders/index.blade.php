@@ -1,3 +1,7 @@
+@php
+    $isAdmin = auth()->user()->isAdmin();
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <div>
@@ -8,7 +12,7 @@
         <form method="GET" action="{{ route('admin.orders.index') }}" class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <input type="hidden" name="per_page" value="{{ $perPage }}">
             <div class="relative w-full sm:w-[360px]">
-                <span class="pointer-events-none absolute inset-y-0 right-3 inline-flex items-center text-moka-muted">
+                <span class="pointer-events-none absolute inline-flex items-center text-moka-muted" style="right: 0.75rem; top: 50%; transform: translateY(-50%);">
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"></path>
                         <circle cx="11" cy="11" r="6" stroke-width="1.8"></circle>
@@ -17,9 +21,9 @@
                 <input
                     id="q"
                     name="q"
-                    type="search"
+                    type="text"
                     value="{{ $search }}"
-                    class="moka-input pr-10"
+                    class="moka-input appearance-none pl-4 pr-10 text-left"
                     placeholder="cari data"
                 >
             </div>
@@ -101,7 +105,7 @@
                                         </svg>
                                     </a>
 
-                                    @if($order->status === 'PAID')
+                                    @if($order->status === 'PAID' && $isAdmin)
                                         <a
                                             href="{{ route('orders.receipt', $order) }}"
                                             class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-moka-line text-moka-primary transition hover:border-moka-primary hover:bg-moka-soft/70"

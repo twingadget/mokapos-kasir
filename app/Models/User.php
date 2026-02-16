@@ -18,6 +18,8 @@ class User extends Authenticatable
 
     public const ROLE_WAITER = 'waiter';
 
+    public const ROLE_MANAGER = 'manager';
+
     /**
      * @var list<string>
      */
@@ -65,5 +67,15 @@ class User extends Authenticatable
     public function isWaiter(): bool
     {
         return $this->role === self::ROLE_WAITER;
+    }
+
+    public function isManager(): bool
+    {
+        return $this->role === self::ROLE_MANAGER;
+    }
+
+    public function canAccessAdminPanel(): bool
+    {
+        return $this->isAdmin() || $this->isManager();
     }
 }

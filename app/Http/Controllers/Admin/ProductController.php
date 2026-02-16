@@ -19,11 +19,11 @@ class ProductController extends Controller
     {
         $search = trim((string) $request->query('q', ''));
 
-        $perPage = (string) $request->query('per_page', '15');
+        $perPage = (string) $request->query('per_page', '10');
         $allowedPerPage = ['10', '15', '25', '50', '100', 'all'];
 
         if (! in_array($perPage, $allowedPerPage, true)) {
-            $perPage = '15';
+            $perPage = '10';
         }
 
         $productsQuery = Product::query()

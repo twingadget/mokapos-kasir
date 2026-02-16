@@ -16,10 +16,10 @@ class OrderController extends Controller
     {
         $search = trim((string) $request->query('q', ''));
 
-        $perPage = (string) $request->query('per_page', '25');
+        $perPage = (string) $request->query('per_page', '10');
         $allowedPerPage = ['10', '25', '50', '100', 'all'];
         if (! in_array($perPage, $allowedPerPage, true)) {
-            $perPage = '25';
+            $perPage = '10';
         }
 
         $exactDate = $this->extractDateFromSearch($search);

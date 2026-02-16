@@ -30,6 +30,16 @@ class PosDemoSeeder extends Seeder
         );
 
         User::query()->updateOrCreate(
+            ['email' => 'manager@coffeeshop.test'],
+            [
+                'name' => 'Manager Bar',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_MANAGER,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::query()->updateOrCreate(
             ['email' => 'kasir@coffeeshop.test'],
             [
                 'name' => 'Kasir Bar',

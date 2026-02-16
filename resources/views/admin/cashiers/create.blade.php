@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             <h1 class="font-display text-2xl font-bold text-moka-ink">Tambah Staff</h1>
-            <p class="text-sm text-moka-muted">Buat akun kasir atau waiter baru untuk operasional.</p>
+            <p class="text-sm text-moka-muted">Buat akun kasir, waiter, atau manager baru untuk operasional.</p>
         </div>
         <a href="{{ route('admin.cashiers.index') }}" class="moka-btn-secondary">Kembali</a>
     </x-slot>

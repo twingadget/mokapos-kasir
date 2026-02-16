@@ -14,7 +14,7 @@ class CashierController extends Controller
     public function index(): View
     {
         $cashiers = User::query()
-            ->whereIn('role', [User::ROLE_KASIR, User::ROLE_WAITER])
+            ->whereIn('role', [User::ROLE_KASIR, User::ROLE_WAITER, User::ROLE_MANAGER])
             ->orderBy('name')
             ->paginate(15);
 
@@ -34,7 +34,7 @@ class CashierController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
-            'role' => ['required', 'in:'.User::ROLE_KASIR.','.User::ROLE_WAITER],
+            'role' => ['required', 'in:'.User::ROLE_KASIR.','.User::ROLE_WAITER.','.User::ROLE_MANAGER],
         ]);
 
         User::query()->create([
@@ -65,7 +65,7 @@ class CashierController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$cashier->id],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
-            'role' => ['required', 'in:'.User::ROLE_KASIR.','.User::ROLE_WAITER],
+            'role' => ['required', 'in:'.User::ROLE_KASIR.','.User::ROLE_WAITER.','.User::ROLE_MANAGER],
         ]);
 
         $cashier->update([
@@ -94,6 +94,6 @@ class CashierController extends Controller
 
     private function ensureStaff(User $user): void
     {
-        abort_unless(in_array($user->role, [User::ROLE_KASIR, User::ROLE_WAITER], true), 404);
+        abort_unless(in_array($user->role, [User::ROLE_KASIR, User::ROLE_WAITER, User::ROLE_MANAGER], true), 404);
     }
 }

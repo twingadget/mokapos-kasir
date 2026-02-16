@@ -13,7 +13,7 @@
         </a>
 
         <div class="hidden items-center gap-2 lg:flex">
-            @if($user?->isAdmin())
+            @if($user?->canAccessAdminPanel())
                 <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'moka-chip moka-chip-active' : 'moka-chip' }}">Laporan</a>
                 <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'moka-chip moka-chip-active' : 'moka-chip' }}">Order</a>
                 <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'moka-chip moka-chip-active' : 'moka-chip' }}">Produk</a>
@@ -46,7 +46,7 @@
 
     <div x-show="open" x-transition class="border-t border-moka-line bg-moka-card px-4 py-3 lg:hidden">
         <div class="grid gap-2">
-            @if($user?->isAdmin())
+            @if($user?->canAccessAdminPanel())
                 <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'moka-chip moka-chip-active' : 'moka-chip' }}">Laporan</a>
                 <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'moka-chip moka-chip-active' : 'moka-chip' }}">Order</a>
                 <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'moka-chip moka-chip-active' : 'moka-chip' }}">Produk</a>

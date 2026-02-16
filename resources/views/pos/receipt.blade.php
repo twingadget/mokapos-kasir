@@ -265,7 +265,7 @@
 
     <div class="actions">
         <button type="button" class="btn btn-primary" onclick="window.print()">Print</button>
-        @if(auth()->user()->isAdmin())
+        @if(auth()->user()->canAccessAdminPanel())
             <a href="{{ route('admin.orders.show', $order) }}" class="btn">Kembali ke Detail</a>
         @else
             <a href="{{ route('pos.history') }}" class="btn">Kembali ke Riwayat</a>
