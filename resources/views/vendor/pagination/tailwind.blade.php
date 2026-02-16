@@ -1,5 +1,5 @@
 @if ($paginator->hasPages())
-    <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="mt-6 flex flex-col gap-3 sm:gap-0">
         <div class="flex justify-between gap-2 sm:hidden">
             @if ($paginator->onFirstPage())
                 <span class="inline-flex h-10 min-w-[96px] items-center justify-center rounded-xl border border-moka-line bg-[#151515] px-4 text-sm font-semibold text-moka-muted/60">
@@ -22,7 +22,7 @@
             @endif
         </div>
 
-        <div class="hidden items-center justify-between gap-4 sm:flex sm:w-full">
+        <div class="hidden items-center justify-end gap-4 sm:flex sm:w-full">
             <p class="text-sm text-moka-muted">
                 {!! __('Showing') !!}
                 @if ($paginator->firstItem())

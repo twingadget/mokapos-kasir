@@ -10,17 +10,18 @@
 
         <div>
             <x-input-label for="update_password_current_password" :value="'Password Saat Ini'" />
-            <div class="relative">
+            <div class="relative mt-1" style="position: relative;">
                 <x-text-input
                     id="update_password_current_password"
                     name="current_password"
                     x-bind:type="showCurrentPassword ? 'text' : 'password'"
-                    class="mt-1 block w-full pr-12"
+                    class="block w-full pr-12"
                     autocomplete="current-password"
                 />
                 <button
                     type="button"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-moka-muted transition hover:text-moka-primary"
+                    class="inline-flex h-7 w-7 items-center justify-center rounded-full text-moka-muted transition hover:text-moka-primary"
+                    style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);"
                     @click="showCurrentPassword = !showCurrentPassword"
                     :aria-label="showCurrentPassword ? 'Sembunyikan password saat ini' : 'Tampilkan password saat ini'"
                 >
@@ -41,17 +42,18 @@
 
         <div>
             <x-input-label for="update_password_password" :value="'Password Baru'" />
-            <div class="relative">
+            <div class="relative mt-1" style="position: relative;">
                 <x-text-input
                     id="update_password_password"
                     name="password"
                     x-bind:type="showNewPassword ? 'text' : 'password'"
-                    class="mt-1 block w-full pr-12"
+                    class="block w-full pr-12"
                     autocomplete="new-password"
                 />
                 <button
                     type="button"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-moka-muted transition hover:text-moka-primary"
+                    class="inline-flex h-7 w-7 items-center justify-center rounded-full text-moka-muted transition hover:text-moka-primary"
+                    style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);"
                     @click="showNewPassword = !showNewPassword"
                     :aria-label="showNewPassword ? 'Sembunyikan password baru' : 'Tampilkan password baru'"
                 >
@@ -72,17 +74,18 @@
 
         <div>
             <x-input-label for="update_password_password_confirmation" :value="'Konfirmasi Password Baru'" />
-            <div class="relative">
+            <div class="relative mt-1" style="position: relative;">
                 <x-text-input
                     id="update_password_password_confirmation"
                     name="password_confirmation"
                     x-bind:type="showConfirmPassword ? 'text' : 'password'"
-                    class="mt-1 block w-full pr-12"
+                    class="block w-full pr-12"
                     autocomplete="new-password"
                 />
                 <button
                     type="button"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-moka-muted transition hover:text-moka-primary"
+                    class="inline-flex h-7 w-7 items-center justify-center rounded-full text-moka-muted transition hover:text-moka-primary"
+                    style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);"
                     @click="showConfirmPassword = !showConfirmPassword"
                     :aria-label="showConfirmPassword ? 'Sembunyikan konfirmasi password baru' : 'Tampilkan konfirmasi password baru'"
                 >
