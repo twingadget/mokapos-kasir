@@ -27,20 +27,28 @@
 
         <div>
             <x-input-label for="email" :value="'Email'" />
-            <x-text-input
-                id="email"
-                name="email"
-                type="email"
-                class="mt-1 block w-full {{ ! $canUpdateEmail ? 'bg-moka-soft/60 text-moka-ink' : '' }}"
-                :value="old('email', $user->email)"
-                required
-                autocomplete="username"
-                @if(! $canUpdateEmail) readonly @endif
-            />
-            @if(! $canUpdateEmail)
-                <p class="mt-2 text-xs text-moka-muted">Email hanya bisa diubah oleh admin.</p>
-            @elseif($canUpdateEmail)
+            @if($canUpdateEmail)
+                <x-text-input
+                    id="email"
+                    name="email"
+                    type="email"
+                    class="mt-1 block w-full"
+                    :value="old('email', $user->email)"
+                    required
+                    autocomplete="username"
+                />
                 <p class="mt-2 text-xs text-moka-muted">Anda dapat mengganti email login admin di sini.</p>
+            @else
+                <x-text-input
+                    id="email"
+                    name="email"
+                    type="email"
+                    class="mt-1 block w-full bg-moka-soft/60 text-moka-ink"
+                    :value="old('email', $user->email)"
+                    autocomplete="username"
+                    readonly
+                />
+                <p class="mt-2 text-xs text-moka-muted">Email hanya bisa diubah oleh admin.</p>
             @endif
             <x-input-error :messages="$errors->get('email')" />
 
