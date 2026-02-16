@@ -74,7 +74,7 @@ Route::middleware(['auth', 'role:admin|manager'])
         Route::resource('categories', CategoryController::class)->only(['index', 'create', 'edit']);
         Route::resource('products', ProductController::class)->only(['index', 'create', 'edit']);
         Route::resource('payment-methods', PaymentMethodController::class)->only(['index', 'create', 'edit']);
-        Route::resource('cashiers', CashierController::class)->only(['index', 'create', 'edit']);
+        Route::resource('staff', CashierController::class)->names('cashiers')->only(['index', 'create', 'edit']);
 
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
@@ -90,7 +90,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
         Route::resource('products', ProductController::class)->only(['store', 'update', 'destroy']);
         Route::resource('payment-methods', PaymentMethodController::class)->only(['store', 'update', 'destroy']);
-        Route::resource('cashiers', CashierController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('staff', CashierController::class)->names('cashiers')->only(['store', 'update', 'destroy']);
 
         Route::post('/orders/{order}/void', [AdminOrderController::class, 'void'])->name('orders.void');
     });

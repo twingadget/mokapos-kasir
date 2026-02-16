@@ -1,13 +1,13 @@
 @php
     $userRole = auth()->user();
-    $isStaff = $userRole->isKasir() || $userRole->isWaiter();
+    $canUpdateEmail = $userRole->isAdmin();
 @endphp
 
 <section x-data="{ profileConfirmOpen: false }">
     <header>
         <h2 class="font-display text-xl font-bold text-moka-ink">Informasi Akun</h2>
         <p class="mt-1 text-sm text-moka-muted">
-            {{ $isStaff ? 'Perbarui nama akun.' : 'Perbarui nama dan email pengguna.' }}
+            {{ $canUpdateEmail ? 'Perbarui nama dan email admin.' : 'Perbarui nama akun.' }}
         </p>
     </header>
 
@@ -31,14 +31,16 @@
                 id="email"
                 name="email"
                 type="email"
-                class="mt-1 block w-full {{ $isStaff ? 'bg-moka-soft/60 text-moka-ink' : '' }}"
+                class="mt-1 block w-full {{ ! $canUpdateEmail ? 'bg-moka-soft/60 text-moka-ink' : '' }}"
                 :value="old('email', $user->email)"
                 required
                 autocomplete="username"
-                @if($isStaff) readonly @endif
+                @if(! $canUpdateEmail) readonly @endif
             />
-            @if($isStaff)
+            @if(! $canUpdateEmail)
                 <p class="mt-2 text-xs text-moka-muted">Email hanya bisa diubah oleh admin.</p>
+            @elseif($canUpdateEmail)
+                <p class="mt-2 text-xs text-moka-muted">Anda dapat mengganti email login admin di sini.</p>
             @endif
             <x-input-error :messages="$errors->get('email')" />
 
