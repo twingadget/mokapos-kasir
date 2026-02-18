@@ -1,56 +1,53 @@
 # Moka POS Bar
 
-A premium web-based POS built for bars and beverage outlets, designed for speed at the cashier desk and clarity for business owners.
+Moka POS Bar is a premium web POS for bars, lounges, and beverage outlets.
+It combines fast front-of-house execution with clean management visibility.
 
-## What Makes This POS Stand Out
-- **Fast checkout flow** with keyboard-friendly interactions and touch-friendly controls.
-- **Modern premium UI** (Dark + Gold) that looks polished on desktop, tablet, and mobile.
-- **Role-based operations** so each team member sees only what they need.
-- **Manager (view-only) role** can monitor full admin pages without CRUD risk.
-- **Real business insight** with revenue, cost, and gross profit tracking in one place.
-- **Production-ready architecture** on Laravel 11 + Blade + Alpine (no heavy SPA overhead).
+## Why This Product Sells
+- Premium **Dark + Gold** interface that feels high-end and consistent across login, admin, cashier, and waiter pages.
+- Fast transaction UX for busy shifts: keyboard-ready, touch-friendly, responsive.
+- Clear separation of duties with role-based access to reduce operational mistakes.
+- Real-time profit awareness with revenue, cost, and gross margin in one workflow.
 
-## Built For Real Outlet Operations
+## Role System That Matches Real Operations
 ### Admin
-- Full master-data control: categories, products, pricing, stock, payment methods, and staff.
-- Dedicated **Staff** workspace at `/admin/staff` for cashier/waiter/manager account management.
-- Admin profile supports both name and email updates.
-- Product image upload with automatic optimization/compression for faster load and lower bandwidth.
-- Dedicated order list with filtering, search, and quick actions.
-- Sales reporting with breakdown by payment method and top products.
-- CSV export for external finance workflows.
+- Full control over products, categories, stock, payment methods, and staff.
+- Full order supervision and cancel/void authority where policy allows.
+- Advanced reporting with payment breakdown, top products, margin data, and CSV export.
+
+### Manager (View-Only)
+- Can monitor all admin pages and metrics.
+- Strictly read-only: no create, update, delete, void, or export actions.
 
 ### Cashier
-- Dedicated POS workspace focused on transaction speed.
-- Product search by name/code, category filtering, quantity controls, and item notes.
-- Open Bill workflow for unpaid tabs.
-- Complete payment flow and instant receipt printing.
+- Own POS station for checkout, payment, and receipt printing.
+- Can process orders sent by waiters.
+- Can create orders and continue open-bill flows based on permissions.
 
 ### Waiter
-- Can create and send orders to cashier flow.
-- Has its own order history to monitor submitted requests.
+- Can create customer orders and send them to cashier.
+- Has dedicated history to track submitted requests.
 
-## Business Intelligence Included
-- Revenue tracking per transaction and date range.
-- Cost (modal) tracking from product level down to order level.
-- Automatic gross profit calculation.
-- Product performance visibility to identify top-selling items quickly.
+## Core POS Capabilities
+- Product search by name/SKU and category filtering.
+- Variant and add-on support per item.
+- Open Bill + Waiting order flows for staged service.
+- Multi-payment support: Cash, QRIS, Debit, E-Wallet.
+- Thermal receipt output (80mm) with reprint support.
+- Daily sequential invoice generation.
 
-## Key Product Capabilities
-- Invoice generation with daily unique sequence.
-- Multi-method payments (Cash, QRIS, Debit, E-Wallet).
-- Thermal receipt-ready output (80mm print layout).
-- Role-aware access control for safer operations.
-- Responsive data presentation, including card-based views on smaller screens.
+## Business Controls & Insight
+- Cost price and selling price tracked at product level.
+- Cost is propagated into transaction lines for accurate margin reporting.
+- Revenue, modal, and gross profit visible in reporting pages.
+- Order list with search and pagination controls for fast audit and follow-up.
 
-## Technical Foundation
-- Laravel 11
-- Blade Templates
-- Alpine.js
-- Tailwind CSS
-- MySQL
-- Laravel Breeze Authentication
+## Product Quality Highlights
+- Laravel 11 architecture with clean Blade + Alpine implementation (no heavy SPA layer).
+- Responsive layouts for desktop, tablet, and mobile.
+- Optimized image handling for lighter production bandwidth.
+- Feature tests included for critical flows (checkout, role access, waiter-to-cashier flow, profile policy).
 
 ---
 
-If you need a POS that looks premium, works fast under pressure, and gives owners clear numbers, this project is ready to deliver.
+Moka POS Bar is built to look premium, move fast during peak hours, and keep business numbers transparent for daily decisions.

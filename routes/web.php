@@ -77,8 +77,6 @@ Route::middleware(['auth', 'role:admin|manager'])
         Route::resource('staff', CashierController::class)->names('cashiers')->only(['index', 'create', 'edit']);
 
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-        Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
-
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     });
@@ -92,6 +90,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('payment-methods', PaymentMethodController::class)->only(['store', 'update', 'destroy']);
         Route::resource('staff', CashierController::class)->names('cashiers')->only(['store', 'update', 'destroy']);
 
+        Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
         Route::post('/orders/{order}/void', [AdminOrderController::class, 'void'])->name('orders.void');
     });
 

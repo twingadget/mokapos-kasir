@@ -6,7 +6,7 @@ $mysqlSslCaAttribute = null;
 
 if (class_exists(\Pdo\Mysql::class) && defined(\Pdo\Mysql::class.'::ATTR_SSL_CA')) {
     $mysqlSslCaAttribute = constant(\Pdo\Mysql::class.'::ATTR_SSL_CA');
-} elseif (defined('PDO::MYSQL_ATTR_SSL_CA')) {
+} elseif (PHP_VERSION_ID < 80500 && defined('PDO::MYSQL_ATTR_SSL_CA')) {
     $mysqlSslCaAttribute = constant('PDO::MYSQL_ATTR_SSL_CA');
 }
 

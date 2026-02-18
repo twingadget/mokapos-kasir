@@ -21,15 +21,20 @@ class ProfileTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_profile_information_can_be_updated(): void
+    public function test_non_admin_profile_update_only_changes_name(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'role' => User::ROLE_KASIR,
+        ]);
+
+        $originalEmail = $user->email;
+        $originalVerifiedAt = $user->email_verified_at;
 
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
-                'name' => 'Test User',
-                'email' => 'test@example.com',
+                'name' => 'Kasir Update',
+                'email' => 'blocked-change@example.com',
             ]);
 
         $response
@@ -38,19 +43,45 @@ class ProfileTest extends TestCase
 
         $user->refresh();
 
-        $this->assertSame('Test User', $user->name);
-        $this->assertSame('test@example.com', $user->email);
-        $this->assertNull($user->email_verified_at);
+        $this->assertSame('Kasir Update', $user->name);
+        $this->assertSame($originalEmail, $user->email);
+        $this->assertEquals($originalVerifiedAt, $user->email_verified_at);
     }
 
-    public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
+    public function test_admin_profile_can_update_email_and_resets_verification(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
 
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
-                'name' => 'Test User',
+                'name' => 'Admin Update',
+                'email' => 'admin-updated@example.com',
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $user->refresh();
+
+        $this->assertSame('Admin Update', $user->name);
+        $this->assertSame('admin-updated@example.com', $user->email);
+        $this->assertNull($user->email_verified_at);
+    }
+
+    public function test_email_verification_status_is_unchanged_when_admin_email_does_not_change(): void
+    {
+        $user = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'Admin Tetap',
                 'email' => $user->email,
             ]);
 
