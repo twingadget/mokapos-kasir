@@ -40,6 +40,7 @@ function hasRequiredError(errors: unknown): boolean {
 export default function LoginForm({ initialError, redirect }: LoginFormProps) {
     const formRef = useRef<HTMLFormElement | null>(null);
     const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const afterCloseHrefRef = useRef<string | null>(null);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -51,7 +52,6 @@ export default function LoginForm({ initialError, redirect }: LoginFormProps) {
     const [alertTone, setAlertTone] = useState<AlertTone>("success");
     const [alertTitle, setAlertTitle] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
-    const [afterCloseHref, setAfterCloseHref] = useState<string | null>(null);
 
     const closeAlert = () => {
         setAlertOpen(false);
@@ -61,9 +61,9 @@ export default function LoginForm({ initialError, redirect }: LoginFormProps) {
             closeTimerRef.current = null;
         }
 
-        if (afterCloseHref) {
-            const href = afterCloseHref;
-            setAfterCloseHref(null);
+        const href = afterCloseHrefRef.current;
+        afterCloseHrefRef.current = null;
+        if (href) {
             window.location.href = href;
         }
     };
@@ -77,7 +77,7 @@ export default function LoginForm({ initialError, redirect }: LoginFormProps) {
         setAlertTitle(title);
         setAlertMessage(message);
         setAlertTone(tone);
-        setAfterCloseHref(options?.href ?? null);
+        afterCloseHrefRef.current = options?.href ?? null;
         setAlertOpen(true);
 
         if (options?.autoCloseMs) {

@@ -2,7 +2,6 @@
 /node_modules
 /\.next
 /\.next-dev
-/public/build
 /public/hot
 /public/storage
 /storage/*.key
