@@ -109,18 +109,18 @@
                     <p class="text-sm text-moka-muted">Halo, <span class="font-semibold text-moka-ink">{{ auth()->user()->name }}</span></p>
                     <a href="{{ $isWaiter ? route('waiter.history') : route('pos.history') }}" class="moka-btn-secondary px-4">Riwayat</a>
                     <a href="{{ route('profile.edit') }}" class="moka-btn-secondary px-4">Profil</a>
-                    <button type="button" class="moka-btn-danger px-4" @click="logoutOpen = true">Logout</button>
+                    <a href="{{ route('logout') }}" class="moka-btn-danger px-4" @click.prevent="logoutOpen = true">Logout</a>
                 </div>
 
                 <div class="flex items-center gap-2 md:hidden">
                     <a href="{{ $isWaiter ? route('waiter.history') : route('pos.history') }}" class="moka-btn-secondary px-3">Riwayat</a>
                     <a href="{{ route('profile.edit') }}" class="moka-btn-secondary px-3">Profil</a>
-                    <button type="button" class="moka-btn-danger px-3" @click="logoutOpen = true">Logout</button>
+                    <a href="{{ route('logout') }}" class="moka-btn-danger px-3" @click.prevent="logoutOpen = true">Logout</a>
                 </div>
             </div>
         </header>
 
-        <form x-ref="logoutForm" method="POST" action="{{ route('logout') }}" class="hidden">
+        <form id="logout-form" x-ref="logoutForm" method="POST" action="{{ route('logout') }}" class="hidden">
             @csrf
         </form>
 
@@ -145,7 +145,7 @@
                 <section class="soft-card flex h-full min-h-0 flex-col overflow-hidden md:col-span-1">
                     <div class="border-b border-moka-line p-4">
                         <label for="search" class="moka-label">Cari produk / scan kode (tekan "/" untuk fokus)</label>
-                        <input id="search" x-ref="searchInput" type="text" x-model.debounce.100ms="search" class="moka-input" placeholder="Contoh: ABSOLUTE VODKA / 91">
+                        <input id="search" x-ref="searchInput" type="text" x-model.debounce.100ms="searchQuery" class="moka-input" placeholder="Contoh: ABSOLUTE VODKA / 91">
                     </div>
 
                     <div class="border-b border-moka-line p-3 xl:hidden">
@@ -598,7 +598,7 @@
 
                 <div class="moka-modal-footer">
                     <button type="button" class="moka-btn-secondary" @click="logoutOpen = false">Batal</button>
-                    <button type="button" class="moka-btn-danger" @click="$refs.logoutForm.submit()">Logout</button>
+                    <button type="submit" form="logout-form" class="moka-btn-danger" @click="$refs.logoutForm.submit()">Logout</button>
                 </div>
             </div>
         </x-ui.modal>
@@ -776,7 +776,7 @@
                 waiterOrders: config.waiterOrders ?? [],
                 resumeWaiterOrder: config.resumeWaiterOrder ?? null,
                 waiterOrdersHasNew: false,
-                search: '',
+                searchQuery: '',
                 selectedCategory: null,
                 cart: [],
                 discountType: 'none',
@@ -993,7 +993,17 @@
                 },
 
                 get filteredProducts() {
-                    const query = this.search.trim().toLowerCase();
+                    const searchSource = typeof this.searchQuery === 'string'
+                        ? this.searchQuery
+                        : (this.searchQuery && typeof this.searchQuery.value === 'string'
+                            ? this.searchQuery.value
+                            : String(this.searchQuery ?? ''));
+
+                    if (typeof this.searchQuery !== 'string') {
+                        this.searchQuery = searchSource;
+                    }
+
+                    const query = searchSource.trim().toLowerCase();
 
                     return this.products.filter((product) => {
                         const matchedCategory = this.selectedCategory === null || product.category_id === this.selectedCategory;

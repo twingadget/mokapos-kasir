@@ -1,53 +1,81 @@
-# Moka POS Bar
+# Moka POS Bar (Next.js + Prisma + PostgreSQL)
 
-Moka POS Bar is a premium web POS for bars, lounges, and beverage outlets.
-It combines fast front-of-house execution with clean management visibility.
+Migrasi dari Laravel ke Next.js dengan:
+- `Next.js` (App Router)
+- `Prisma ORM`
+- `PostgreSQL`
+- UI, alur POS/waiter/admin, dan aset foto tetap dipertahankan
 
-## Why This Product Sells
-- Premium **Dark + Gold** interface that feels high-end and consistent across login, admin, cashier, and waiter pages.
-- Fast transaction UX for busy shifts: keyboard-ready, touch-friendly, responsive.
-- Clear separation of duties with role-based access to reduce operational mistakes.
-- Real-time profit awareness with revenue, cost, and gross margin in one workflow.
+## 1) Setup
 
-## Role System That Matches Real Operations
-### Admin
-- Full control over products, categories, stock, payment methods, and staff.
-- Full order supervision and cancel/void authority where policy allows.
-- Advanced reporting with payment breakdown, top products, margin data, and CSV export.
+```bash
+cp .env.example .env
+# lalu isi AUTH_SECRET dan DATABASE_URL sesuai environment
+```
 
-### Manager (View-Only)
-- Can monitor all admin pages and metrics.
-- Strictly read-only: no create, update, delete, void, or export actions.
+Install dependency:
 
-### Cashier
-- Own POS station for checkout, payment, and receipt printing.
-- Can process orders sent by waiters.
-- Can create orders and continue open-bill flows based on permissions.
+```bash
+npm install
+```
 
-### Waiter
-- Can create customer orders and send them to cashier.
-- Has dedicated history to track submitted requests.
+Jalankan PostgreSQL lokal (opsional, via Docker):
 
-## Core POS Capabilities
-- Product search by name/SKU and category filtering.
-- Variant and add-on support per item.
-- Open Bill + Waiting order flows for staged service.
-- Multi-payment support: Cash, QRIS, Debit, E-Wallet.
-- Thermal receipt output (80mm) with reprint support.
-- Daily sequential invoice generation.
+```bash
+npm run db:up
+```
 
-## Business Controls & Insight
-- Cost price and selling price tracked at product level.
-- Cost is propagated into transaction lines for accurate margin reporting.
-- Revenue, modal, and gross profit visible in reporting pages.
-- Order list with search and pagination controls for fast audit and follow-up.
+Generate Prisma client:
 
-## Product Quality Highlights
-- Laravel 11 architecture with clean Blade + Alpine implementation (no heavy SPA layer).
-- Responsive layouts for desktop, tablet, and mobile.
-- Optimized image handling for lighter production bandwidth.
-- Feature tests included for critical flows (checkout, role access, waiter-to-cashier flow, profile policy).
+```bash
+npm run prisma:generate
+```
 
----
+Migrasi schema ke PostgreSQL:
 
-Moka POS Bar is built to look premium, move fast during peak hours, and keep business numbers transparent for daily decisions.
+```bash
+npm run prisma:migrate -- --name init
+```
+
+Seed data demo (user, kategori, produk, metode bayar):
+
+```bash
+npm run prisma:seed
+```
+
+## 2) Jalankan aplikasi
+
+```bash
+npm run dev
+```
+
+Default URL:
+- `http://localhost:3000`
+
+## 3) Akun demo
+
+Semua password: `password`
+
+- `admin@coffeeshop.test` (admin)
+- `manager@coffeeshop.test` (manager, read-only admin pages)
+- `kasir@coffeeshop.test` (kasir)
+- `waiter1@coffeeshop.test` (waiter)
+- `waiter2@coffeeshop.test` (waiter)
+
+## 4) Route utama
+
+- `/login`
+- `/pos`
+- `/waiter`
+- `/admin/reports`
+- `/admin/orders`
+- `/admin/products`
+- `/admin/categories`
+- `/admin/payment-methods`
+- `/admin/staff`
+- `/profile`
+
+## Catatan
+
+- Halaman POS dan waiter tetap menggunakan struktur UI asli agar flow dan tampilan tidak berubah.
+- Semua gambar produk tetap dipakai dari folder `public/`.

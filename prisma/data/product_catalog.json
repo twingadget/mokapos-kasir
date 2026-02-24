@@ -1,0 +1,544 @@
+{
+    "categories": [
+        "Minuman",
+        "Rokok"
+    ],
+    "products": [
+        {
+            "name": "ABSOLUTE VODKA",
+            "sku": "91",
+            "category": "Minuman",
+            "cost_price": 350000,
+            "price": 1175000,
+            "stock_qty": 0
+        },
+        {
+            "name": "ANGGUR MERAH",
+            "sku": "77",
+            "category": "Minuman",
+            "cost_price": 69500,
+            "price": 200000,
+            "stock_qty": 0
+        },
+        {
+            "name": "ANI",
+            "sku": "89",
+            "category": "Minuman",
+            "cost_price": 66000,
+            "price": 200000,
+            "stock_qty": 156
+        },
+        {
+            "name": "API",
+            "sku": "75",
+            "category": "Minuman",
+            "cost_price": 78700,
+            "price": 200000,
+            "stock_qty": 0
+        },
+        {
+            "name": "BACARDI",
+            "sku": "79",
+            "category": "Minuman",
+            "cost_price": 308000,
+            "price": 825000,
+            "stock_qty": 0
+        },
+        {
+            "name": "BATAVIA",
+            "sku": "90",
+            "category": "Minuman",
+            "cost_price": 321350,
+            "price": 825000,
+            "stock_qty": 0
+        },
+        {
+            "name": "BAYLES ORIGINAL",
+            "sku": "83",
+            "category": "Minuman",
+            "cost_price": 470000,
+            "price": 825000,
+            "stock_qty": 1
+        },
+        {
+            "name": "BINTANG PILSENER",
+            "sku": "62",
+            "category": "Minuman",
+            "cost_price": 20084,
+            "price": 50000,
+            "stock_qty": 0
+        },
+        {
+            "name": "BINTANG REDLER",
+            "sku": "7",
+            "category": "Minuman",
+            "cost_price": 20084,
+            "price": 50000,
+            "stock_qty": 0
+        },
+        {
+            "name": "BLUE ILUSION BY GLASS",
+            "sku": "9",
+            "category": "Minuman",
+            "cost_price": 40000,
+            "price": 100000,
+            "stock_qty": 0
+        },
+        {
+            "name": "BLUE ILUSION PITCHER",
+            "sku": "8",
+            "category": "Minuman",
+            "cost_price": 200000,
+            "price": 500000,
+            "stock_qty": 0
+        },
+        {
+            "name": "BOMBAY SAPPHIRE",
+            "sku": "92",
+            "category": "Minuman",
+            "cost_price": 430000,
+            "price": 975000,
+            "stock_qty": 0
+        },
+        {
+            "name": "Bunhahan",
+            "sku": "85",
+            "category": "Minuman",
+            "cost_price": 0,
+            "price": 0,
+            "stock_qty": 1
+        },
+        {
+            "name": "CAPTAIN MORGAN",
+            "sku": "12",
+            "category": "Minuman",
+            "cost_price": 316500,
+            "price": 775000,
+            "stock_qty": 43
+        },
+        {
+            "name": "CHIVAS 12 YO",
+            "sku": "13",
+            "category": "Minuman",
+            "cost_price": 530000,
+            "price": 1525000,
+            "stock_qty": 2
+        },
+        {
+            "name": "CHIVAS 18YO",
+            "sku": "14",
+            "category": "Minuman",
+            "cost_price": 1000000,
+            "price": 2325000,
+            "stock_qty": 0
+        },
+        {
+            "name": "COCA-COLA",
+            "sku": "68",
+            "category": "Minuman",
+            "cost_price": 3000,
+            "price": 30000,
+            "stock_qty": 212
+        },
+        {
+            "name": "COCKTAIL",
+            "sku": "71",
+            "category": "Minuman",
+            "cost_price": 70000,
+            "price": 225000,
+            "stock_qty": 6
+        },
+        {
+            "name": "ESSE CHANGE",
+            "sku": "17",
+            "category": "Rokok",
+            "cost_price": 47700,
+            "price": 65000,
+            "stock_qty": 5
+        },
+        {
+            "name": "FLAMING",
+            "sku": "78",
+            "category": "Minuman",
+            "cost_price": 40000,
+            "price": 100000,
+            "stock_qty": 0
+        },
+        {
+            "name": "GLENFIDDICH",
+            "sku": "19",
+            "category": "Minuman",
+            "cost_price": 700000,
+            "price": 1125000,
+            "stock_qty": 0
+        },
+        {
+            "name": "GORDONS",
+            "sku": "20",
+            "category": "Minuman",
+            "cost_price": 335000,
+            "price": 825000,
+            "stock_qty": 15
+        },
+        {
+            "name": "GORDONS 1 BOTOL 2 SPRITE",
+            "sku": "96",
+            "category": "Minuman",
+            "cost_price": 401000,
+            "price": 1000000,
+            "stock_qty": 0
+        },
+        {
+            "name": "GORDONS 2 BOTOL",
+            "sku": "97",
+            "category": "Minuman",
+            "cost_price": 670000,
+            "price": 1650000,
+            "stock_qty": 0
+        },
+        {
+            "name": "GREY GOOSE",
+            "sku": "22",
+            "category": "Minuman",
+            "cost_price": 650000,
+            "price": 1425000,
+            "stock_qty": 0
+        },
+        {
+            "name": "GUINESS",
+            "sku": "23",
+            "category": "Minuman",
+            "cost_price": 25875,
+            "price": 50000,
+            "stock_qty": 0
+        },
+        {
+            "name": "HEINEKEN",
+            "sku": "24",
+            "category": "Minuman",
+            "cost_price": 25875,
+            "price": 50000,
+            "stock_qty": 0
+        },
+        {
+            "name": "HENNESSY VSOP",
+            "sku": "25",
+            "category": "Minuman",
+            "cost_price": 1000000,
+            "price": 2250000,
+            "stock_qty": 0
+        },
+        {
+            "name": "ICE AND LYCHEE",
+            "sku": "87",
+            "category": "Minuman",
+            "cost_price": 212550,
+            "price": 775000,
+            "stock_qty": 0
+        },
+        {
+            "name": "ICELAND VODKA",
+            "sku": "26",
+            "category": "Minuman",
+            "cost_price": 197000,
+            "price": 775000,
+            "stock_qty": 6
+        },
+        {
+            "name": "JACK DANIELS",
+            "sku": "28",
+            "category": "Minuman",
+            "cost_price": 450000,
+            "price": 1375000,
+            "stock_qty": 1
+        },
+        {
+            "name": "JAGERMEISTER",
+            "sku": "29",
+            "category": "Minuman",
+            "cost_price": 393000,
+            "price": 1125000,
+            "stock_qty": 3
+        },
+        {
+            "name": "JAMESON",
+            "sku": "72",
+            "category": "Minuman",
+            "cost_price": 465000,
+            "price": 1375000,
+            "stock_qty": 9
+        },
+        {
+            "name": "JHONY WALKER BLACK",
+            "sku": "30",
+            "category": "Minuman",
+            "cost_price": 500000,
+            "price": 1425000,
+            "stock_qty": 1
+        },
+        {
+            "name": "JHONY WALKER RED",
+            "sku": "31",
+            "category": "Minuman",
+            "cost_price": 340000,
+            "price": 1125000,
+            "stock_qty": 0
+        },
+        {
+            "name": "JIM BEAM",
+            "sku": "86",
+            "category": "Minuman",
+            "cost_price": 370000,
+            "price": 975000,
+            "stock_qty": 5
+        },
+        {
+            "name": "KAWA KAWA",
+            "sku": "95",
+            "category": "Minuman",
+            "cost_price": 65000,
+            "price": 200000,
+            "stock_qty": 1
+        },
+        {
+            "name": "KRATINGDAENG",
+            "sku": "32",
+            "category": "Minuman",
+            "cost_price": 5106,
+            "price": 30000,
+            "stock_qty": 42
+        },
+        {
+            "name": "LONG ISLAND BY GLASS",
+            "sku": "33",
+            "category": "Minuman",
+            "cost_price": 20000,
+            "price": 100000,
+            "stock_qty": 6
+        },
+        {
+            "name": "LONG ISLAND BY PITCHER",
+            "sku": "34",
+            "category": "Minuman",
+            "cost_price": 250000,
+            "price": 500000,
+            "stock_qty": 0
+        },
+        {
+            "name": "MARLBORO ICE BURST",
+            "sku": "35",
+            "category": "Rokok",
+            "cost_price": 48000,
+            "price": 70000,
+            "stock_qty": 0
+        },
+        {
+            "name": "MARTEL VSOP",
+            "sku": "36",
+            "category": "Minuman",
+            "cost_price": 0,
+            "price": 0,
+            "stock_qty": 0
+        },
+        {
+            "name": "MINERAL WATER",
+            "sku": "37",
+            "category": "Minuman",
+            "cost_price": 1472,
+            "price": 20000,
+            "stock_qty": 65
+        },
+        {
+            "name": "PAKET ANI 3 BOTOL",
+            "sku": "94",
+            "category": "Minuman",
+            "cost_price": 198000,
+            "price": 500000,
+            "stock_qty": 0
+        },
+        {
+            "name": "PAKET KAWA 3 BOTOL",
+            "sku": "100",
+            "category": "Minuman",
+            "cost_price": 196500,
+            "price": 500000,
+            "stock_qty": 1
+        },
+        {
+            "name": "POKA GREEN TEA",
+            "sku": "84",
+            "category": "Minuman",
+            "cost_price": 6000,
+            "price": 10000,
+            "stock_qty": 59
+        },
+        {
+            "name": "PROST LAGER",
+            "sku": "41",
+            "category": "Minuman",
+            "cost_price": 0,
+            "price": 0,
+            "stock_qty": 0
+        },
+        {
+            "name": "PULPY ORANGE",
+            "sku": "42",
+            "category": "Minuman",
+            "cost_price": 5245,
+            "price": 10000,
+            "stock_qty": 57
+        },
+        {
+            "name": "ROKU GIN",
+            "sku": "44",
+            "category": "Minuman",
+            "cost_price": 525000,
+            "price": 1125000,
+            "stock_qty": 1
+        },
+        {
+            "name": "SAMPOERNA MENTHOL",
+            "sku": "45",
+            "category": "Rokok",
+            "cost_price": 35000,
+            "price": 65000,
+            "stock_qty": 9
+        },
+        {
+            "name": "SAMPOERNA MILD",
+            "sku": "46",
+            "category": "Rokok",
+            "cost_price": 35000,
+            "price": 65000,
+            "stock_qty": 9
+        },
+        {
+            "name": "SINGARAJA",
+            "sku": "93",
+            "category": "Minuman",
+            "cost_price": 12300,
+            "price": 50000,
+            "stock_qty": 0
+        },
+        {
+            "name": "SINGLETON 12YO",
+            "sku": "47",
+            "category": "Minuman",
+            "cost_price": 640000,
+            "price": 1975000,
+            "stock_qty": 1
+        },
+        {
+            "name": "SMIRNOFF",
+            "sku": "48",
+            "category": "Minuman",
+            "cost_price": 295000,
+            "price": 775000,
+            "stock_qty": 0
+        },
+        {
+            "name": "SOJU",
+            "sku": "49",
+            "category": "Minuman",
+            "cost_price": 60000,
+            "price": 200000,
+            "stock_qty": 6
+        },
+        {
+            "name": "SPRITE",
+            "sku": "50",
+            "category": "Minuman",
+            "cost_price": 3000,
+            "price": 30000,
+            "stock_qty": 130
+        },
+        {
+            "name": "TEQUILA CLASE AZUL",
+            "sku": "88",
+            "category": "Minuman",
+            "cost_price": 0,
+            "price": 0,
+            "stock_qty": 5
+        },
+        {
+            "name": "TEQUILA CODIGO",
+            "sku": "69",
+            "category": "Minuman",
+            "cost_price": 1350000,
+            "price": 2375000,
+            "stock_qty": 0
+        },
+        {
+            "name": "TEQUILA JOSE",
+            "sku": "51",
+            "category": "Minuman",
+            "cost_price": 450000,
+            "price": 1175000,
+            "stock_qty": 3
+        },
+        {
+            "name": "TEQUILA JOSE KECIL",
+            "sku": "98",
+            "category": "Minuman",
+            "cost_price": 235000,
+            "price": 600000,
+            "stock_qty": 0
+        },
+        {
+            "name": "TOMATIN",
+            "sku": "73",
+            "category": "Minuman",
+            "cost_price": 0,
+            "price": 2400000,
+            "stock_qty": 1
+        },
+        {
+            "name": "TONIC WATER",
+            "sku": "52",
+            "category": "Minuman",
+            "cost_price": 5500,
+            "price": 30000,
+            "stock_qty": 6
+        },
+        {
+            "name": "VIBE BLACK TEA",
+            "sku": "53",
+            "category": "Minuman",
+            "cost_price": 345000,
+            "price": 825000,
+            "stock_qty": 0
+        },
+        {
+            "name": "VIBE EXOTIC LYCHEE",
+            "sku": "55",
+            "category": "Minuman",
+            "cost_price": 345000,
+            "price": 825000,
+            "stock_qty": 13
+        },
+        {
+            "name": "VIBE TEQUILA",
+            "sku": "56",
+            "category": "Minuman",
+            "cost_price": 325000,
+            "price": 825000,
+            "stock_qty": 0
+        },
+        {
+            "name": "WATTERFALL",
+            "sku": "59",
+            "category": "Minuman",
+            "cost_price": 55000,
+            "price": 200000,
+            "stock_qty": 0
+        },
+        {
+            "name": "YAKULT",
+            "sku": "99",
+            "category": "Minuman",
+            "cost_price": 2000,
+            "price": 10000,
+            "stock_qty": 0
+        }
+    ]
+}

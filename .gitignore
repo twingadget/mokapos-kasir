@@ -1,5 +1,7 @@
 /.phpunit.cache
 /node_modules
+/\.next
+/\.next-dev
 /public/build
 /public/hot
 /public/storage
@@ -17,3 +19,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+*.tsbuildinfo
