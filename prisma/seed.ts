@@ -190,6 +190,9 @@ async function seedMasterData(): Promise<void> {
                 data: { isActive: false },
             });
         }
+    }, {
+        maxWait: 20_000,
+        timeout: 120_000,
     });
 
     const paymentMethods = [
