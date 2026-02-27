@@ -12,8 +12,13 @@ export async function authenticateUser(email: string, password: string): Promise
         return null;
     }
 
-    const user = await prisma.user.findUnique({
-        where: { email: normalizedEmail },
+    const user = await prisma.user.findFirst({
+        where: {
+            email: {
+                equals: normalizedEmail,
+                mode: "insensitive",
+            },
+        },
         select: {
             id: true,
             name: true,
@@ -27,7 +32,13 @@ export async function authenticateUser(email: string, password: string): Promise
         return null;
     }
 
-    const ok = await bcrypt.compare(password, user.password);
+    // Support legacy Laravel bcrypt hashes that use "$2y$" prefix.
+    // bcryptjs compares correctly with "$2a$/$2b$", so normalize first.
+    const normalizedHash = user.password.startsWith("$2y$")
+        ? `$2b$${user.password.slice(4)}`
+        : user.password;
+
+    const ok = await bcrypt.compare(password, normalizedHash);
     if (!ok) {
         return null;
     }
