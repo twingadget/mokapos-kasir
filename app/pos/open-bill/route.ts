@@ -28,6 +28,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             service: normalized.service,
             openBillId: normalized.openBillId,
             notes: normalized.notes,
+            customerPlaceZone: normalized.customerPlaceZone,
+            customerPlaceNumber: normalized.customerPlaceNumber,
         });
 
         return NextResponse.json({

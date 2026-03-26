@@ -30,6 +30,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             paymentMethodId: normalized.paymentMethodId,
             cashReceived: normalized.cashReceived,
             notes: normalized.notes,
+            customerPlaceZone: normalized.customerPlaceZone,
+            customerPlaceNumber: normalized.customerPlaceNumber,
         });
 
         return NextResponse.json({

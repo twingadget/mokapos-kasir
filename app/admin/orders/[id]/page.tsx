@@ -6,6 +6,7 @@ import Badge from "@/components/Badge";
 import ConfirmModalAction from "@/components/ConfirmModalAction";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { decodeOrderNotes, formatServicePlaceLabel } from "@/lib/services/order-notes";
 import { canVoidOrder, displayInvoice } from "@/lib/services/order-access";
 import { requireServerSessionUser } from "@/lib/server-auth";
 
@@ -51,6 +52,9 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
     if (!order) {
         notFound();
     }
+
+    const decodedNotes = decodeOrderNotes(order.notes);
+    const customerPlaceLabel = formatServicePlaceLabel(decodedNotes.servicePlace);
 
     return (
         <AppShell user={user} active="admin.orders">
@@ -125,6 +129,18 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                         <div className="flex items-center justify-between">
                             <dt>Kasir</dt>
                             <dd className="font-semibold text-moka-ink">{order.user?.name ?? "-"}</dd>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <dt>Waiter</dt>
+                            <dd className="font-semibold text-moka-ink">{order.waiter?.name ?? "-"}</dd>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <dt>Tempat Customer</dt>
+                            <dd className="font-semibold text-moka-ink">{customerPlaceLabel ?? "-"}</dd>
+                        </div>
+                        <div className="flex items-start justify-between gap-3">
+                            <dt>Catatan Order</dt>
+                            <dd className="max-w-[220px] text-right font-semibold text-moka-ink">{decodedNotes.note ?? "-"}</dd>
                         </div>
                         <div className="flex items-center justify-between">
                             <dt>Status</dt>

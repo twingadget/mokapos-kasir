@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { readSessionUser } from "@/lib/auth";
 import { toNumber } from "@/lib/format";
+import { decodeOrderNotes, formatServicePlaceLabel } from "@/lib/services/order-notes";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
     const user = readSessionUser(request);
@@ -31,11 +32,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
 
     return NextResponse.json({
-        orders: orders.map((order) => ({
-            id: order.id,
-            total: toNumber(order.total),
-            updated_at: order.updatedAt.toISOString(),
-            waiter_name: order.waiter?.name ?? order.user?.name ?? "-",
-        })),
+        orders: orders.map((order) => {
+            const decodedNotes = decodeOrderNotes(order.notes);
+
+            return {
+                id: order.id,
+                total: toNumber(order.total),
+                updated_at: order.updatedAt.toISOString(),
+                waiter_name: order.waiter?.name ?? order.user?.name ?? "-",
+                place_label: formatServicePlaceLabel(decodedNotes.servicePlace),
+            };
+        }),
     });
 }

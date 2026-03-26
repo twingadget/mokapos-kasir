@@ -1,5 +1,6 @@
 import { OrderStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { decodeOrderNotes, formatServicePlaceLabel } from "@/lib/services/order-notes";
 import { deriveTaxPercent } from "@/lib/services/orders";
 import { toNumber } from "@/lib/format";
 
@@ -44,6 +45,9 @@ function mapResumePayload(order: {
     tax_percent: number;
     service: number;
     notes: string | null;
+    customer_place_zone: "Table" | "Sofa" | "VIP" | null;
+    customer_place_number: number | null;
+    customer_place_label: string | null;
     items: Array<{
         product_id: number;
         variant_id: number | null;
@@ -54,6 +58,8 @@ function mapResumePayload(order: {
         addons: Array<{ id: number; name: string; price: number }>;
     }>;
 } {
+    const decodedNotes = decodeOrderNotes(order.notes);
+
     return {
         id: order.id,
         discount_type: order.discountType,
@@ -65,7 +71,10 @@ function mapResumePayload(order: {
             tax: toNumber(order.tax),
         }),
         service: toNumber(order.service),
-        notes: order.notes,
+        notes: decodedNotes.note,
+        customer_place_zone: decodedNotes.servicePlace?.zone ?? null,
+        customer_place_number: decodedNotes.servicePlace?.number ?? null,
+        customer_place_label: formatServicePlaceLabel(decodedNotes.servicePlace),
         items: order.items.map((item) => ({
             product_id: item.productId,
             variant_id: item.variantId,
@@ -110,7 +119,7 @@ export async function getPosBootstrapData(params: {
     addons: Array<{ id: number; name: string; price: number }>;
     paymentMethods: Array<{ id: number; name: string; code: string }>;
     openBills: Array<{ id: number; total: number; updated_at: string }>;
-    waiterOrders: Array<{ id: number; total: number; updated_at: string; waiter_name: string }>;
+    waiterOrders: Array<{ id: number; total: number; updated_at: string; waiter_name: string; place_label: string | null }>;
     resumeOpenBill: ReturnType<typeof mapResumePayload> | null;
     resumeWaiterOrder: ReturnType<typeof mapResumePayload> | null;
 }> {
@@ -200,6 +209,7 @@ export async function getPosBootstrapData(params: {
                   select: {
                       id: true,
                       total: true,
+                      notes: true,
                       updatedAt: true,
                       waiter: {
                           select: { name: true },
@@ -334,12 +344,17 @@ export async function getPosBootstrapData(params: {
             total: toNumber(entry.total),
             updated_at: entry.updatedAt.toISOString(),
         })),
-        waiterOrders: waiterOrders.map((entry) => ({
-            id: entry.id,
-            total: toNumber(entry.total),
-            updated_at: entry.updatedAt.toISOString(),
-            waiter_name: entry.waiter?.name ?? entry.user?.name ?? "-",
-        })),
+        waiterOrders: waiterOrders.map((entry) => {
+            const decodedNotes = decodeOrderNotes(entry.notes);
+
+            return {
+                id: entry.id,
+                total: toNumber(entry.total),
+                updated_at: entry.updatedAt.toISOString(),
+                waiter_name: entry.waiter?.name ?? entry.user?.name ?? "-",
+                place_label: formatServicePlaceLabel(decodedNotes.servicePlace),
+            };
+        }),
         resumeOpenBill,
         resumeWaiterOrder,
     };

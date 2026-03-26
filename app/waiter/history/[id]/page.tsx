@@ -6,6 +6,7 @@ import Badge from "@/components/Badge";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { canViewOrder, displayInvoice } from "@/lib/services/order-access";
+import { decodeOrderNotes } from "@/lib/services/order-notes";
 import { requireServerSessionUser } from "@/lib/server-auth";
 
 type WaiterOrderDetailPageProps = {
@@ -18,6 +19,16 @@ function discountLabel(order: { discountType: string; discountValue: number }): 
     }
 
     return formatCurrency(order.discountValue);
+}
+
+function formatWaiterCustomerPlace(notes: string | null): string {
+    const place = decodeOrderNotes(notes).servicePlace;
+    if (!place) {
+        return "-";
+    }
+
+    const zoneLabel = place.zone === "Table" ? "Meja" : place.zone;
+    return `${zoneLabel} ${place.number}`;
 }
 
 export default async function WaiterOrderDetailPage({ params }: WaiterOrderDetailPageProps) {
@@ -54,6 +65,8 @@ export default async function WaiterOrderDetailPage({ params }: WaiterOrderDetai
     if (!canViewOrder(user, order)) {
         redirect("/waiter/history");
     }
+
+    const customerPlaceLabel = formatWaiterCustomerPlace(order.notes);
 
     return (
         <AppShell user={user} active="waiter.history">
@@ -114,6 +127,10 @@ export default async function WaiterOrderDetailPage({ params }: WaiterOrderDetai
                         <div className="flex items-center justify-between">
                             <dt>Waiter</dt>
                             <dd className="font-semibold text-moka-ink">{order.waiter?.name ?? "-"}</dd>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <dt>Tempat Customer</dt>
+                            <dd className="font-semibold text-moka-ink">{customerPlaceLabel}</dd>
                         </div>
                         <div className="flex items-center justify-between">
                             <dt>Status</dt>

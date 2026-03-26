@@ -139,12 +139,12 @@
         }
 
         .moka-table-mobile tbody td {
-            @apply flex items-start justify-between gap-3 border-0 px-0 py-2 text-right text-sm;
+            @apply block border-0 px-0 py-2 text-left text-sm break-words whitespace-normal;
         }
 
         .moka-table-mobile tbody td::before {
             content: attr(data-label);
-            @apply text-left text-xs font-semibold uppercase tracking-wide text-moka-muted;
+            @apply mb-1 block text-left text-xs font-semibold uppercase tracking-wide text-moka-muted;
         }
 
         .moka-table-mobile tbody td[colspan] {
@@ -156,7 +156,7 @@
         }
 
         .moka-table-mobile tbody td[data-label='Aksi'] {
-            @apply block pt-3 text-right;
+            @apply block pt-3 text-left;
         }
 
         .moka-table-mobile tbody td[data-label='Aksi']::before {

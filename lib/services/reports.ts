@@ -1,5 +1,6 @@
 import { OrderStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { decodeOrderNotes, formatServicePlaceLabel } from "@/lib/services/order-notes";
 import { resolveOrderCost } from "@/lib/services/orders";
 
 export type ReportRange = {
@@ -81,6 +82,8 @@ export async function getReportData(range: ReportRange): Promise<{
         total: number;
         userName: string;
         waiterName: string | null;
+        customerPlaceLabel: string | null;
+        orderNote: string | null;
         orderCost: number;
         orderProfit: number;
     }>;
@@ -205,6 +208,7 @@ export async function getReportData(range: ReportRange): Promise<{
     const orders = ordersRaw
         .map((order) => {
             const orderCost = resolveOrderCost(order);
+            const decodedNotes = decodeOrderNotes(order.notes);
             return {
                 id: order.id,
                 invoiceNo: order.invoiceNo,
@@ -214,6 +218,8 @@ export async function getReportData(range: ReportRange): Promise<{
                 total: Number(order.total),
                 userName: order.user?.name ?? "-",
                 waiterName: order.waiter?.name ?? null,
+                customerPlaceLabel: formatServicePlaceLabel(decodedNotes.servicePlace),
+                orderNote: decodedNotes.note,
                 orderCost,
                 orderProfit: Number(order.total) - orderCost,
             };
@@ -243,6 +249,8 @@ export function buildReportCsv(params: {
         invoiceNo: string;
         orderedAt: Date;
         userName: string;
+        waiterName?: string | null;
+        customerPlaceLabel?: string | null;
         status: OrderStatus;
         paymentMethod: string;
         total: number;
@@ -250,11 +258,13 @@ export function buildReportCsv(params: {
         orderProfit: number;
     }>;
 }): string {
-    const header = ["Invoice", "Tanggal", "Kasir", "Status", "Metode", "Total", "Modal", "Laba Kotor"];
+    const header = ["Invoice", "Tanggal", "Kasir", "Waiter", "Tempat", "Status", "Metode", "Total", "Modal", "Laba Kotor"];
     const rows = params.orders.map((order) => [
         order.status === OrderStatus.OPEN_BILL ? `Open Bill #${order.id}` : order.status === OrderStatus.WAITING ? `Pesanan #${order.id}` : order.invoiceNo,
         order.orderedAt.toISOString().replace("T", " ").slice(0, 19),
         order.userName,
+        order.waiterName ?? "-",
+        order.customerPlaceLabel ?? "-",
         order.status,
         order.status === OrderStatus.OPEN_BILL || order.status === OrderStatus.WAITING ? "-" : order.paymentMethod,
         order.total.toString(),

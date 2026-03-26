@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { readdir } from "node:fs/promises";

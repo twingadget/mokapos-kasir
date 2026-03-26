@@ -7,6 +7,7 @@ import ConfirmModalAction from "@/components/ConfirmModalAction";
 import Pagination from "@/components/Pagination";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { decodeOrderNotes, formatServicePlaceLabel } from "@/lib/services/order-notes";
 import { displayInvoice } from "@/lib/services/order-access";
 import { resolveOrderCost } from "@/lib/services/orders";
 import { requireServerSessionUser } from "@/lib/server-auth";
@@ -196,12 +197,14 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
             }
 
             const orderCost = resolveOrderCost(order);
+            const decodedNotes = decodeOrderNotes(order.notes);
             const values = [
                 order.id.toString(),
                 order.invoiceNo,
                 order.paymentMethod,
                 order.status,
-                order.notes ?? "",
+                decodedNotes.note ?? "",
+                formatServicePlaceLabel(decodedNotes.servicePlace) ?? "",
                 order.user?.name ?? "",
                 order.user?.email ?? "",
                 order.waiter?.name ?? "",

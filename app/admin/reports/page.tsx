@@ -163,6 +163,8 @@ export default async function AdminReportsPage({ searchParams }: ReportsPageProp
                                 <th>Invoice</th>
                                 <th>Waktu</th>
                                 <th>Kasir</th>
+                                <th>Waiter</th>
+                                <th>Tempat</th>
                                 <th>Status</th>
                                 <th>Metode</th>
                                 <th>Total</th>
@@ -174,7 +176,7 @@ export default async function AdminReportsPage({ searchParams }: ReportsPageProp
                         <tbody>
                             {pagedOrders.length === 0 ? (
                                 <tr>
-                                    <td colSpan={9} className="py-10 text-center text-sm text-moka-muted">
+                                    <td colSpan={11} className="py-10 text-center text-sm text-moka-muted">
                                         Belum ada transaksi pada rentang tanggal ini.
                                     </td>
                                 </tr>
@@ -188,6 +190,13 @@ export default async function AdminReportsPage({ searchParams }: ReportsPageProp
                                             <td className="font-semibold">{displayInvoice(order)}</td>
                                             <td>{formatDateTime(order.orderedAt)}</td>
                                             <td>{order.userName}</td>
+                                            <td>{order.waiterName ?? "-"}</td>
+                                            <td>
+                                                <div className="min-w-[140px]">
+                                                    <p>{order.customerPlaceLabel ?? "-"}</p>
+                                                    {order.orderNote ? <p className="mt-1 text-xs text-moka-muted">Catatan: {order.orderNote}</p> : null}
+                                                </div>
+                                            </td>
                                             <td>
                                                 <Badge variant={statusVariant}>{order.status}</Badge>
                                             </td>

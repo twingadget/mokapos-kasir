@@ -1,5 +1,6 @@
 import { OrderStatus, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { decodeOrderNotes, encodeOrderNotes, type ServicePlaceZone } from "@/lib/services/order-notes";
 import { toNumber } from "@/lib/format";
 
 export type OrderItemInput = {
@@ -22,6 +23,8 @@ export type PersistOrderInput = {
     paymentMethodId?: number | null;
     cashReceived?: number | null;
     notes?: string | null;
+    customerPlaceZone?: ServicePlaceZone | null;
+    customerPlaceNumber?: number | null;
 };
 
 export type ValidationIssueMap = Record<string, string[]>;
@@ -415,6 +418,18 @@ export async function persistOrderFromPayload(input: PersistOrderInput): Promise
         let change: number | null = null;
         let invoiceNo =
             draftOrder?.invoiceNo ?? (input.targetStatus === OrderStatus.WAITING ? nextWaiterReference() : nextOpenBillReference());
+        const draftServicePlace = draftOrder ? decodeOrderNotes(draftOrder.notes).servicePlace : null;
+        const servicePlace =
+            input.customerPlaceZone && input.customerPlaceNumber
+                ? {
+                      zone: input.customerPlaceZone,
+                      number: input.customerPlaceNumber,
+                  }
+                : draftServicePlace;
+        const encodedNotes = encodeOrderNotes({
+            note: input.notes,
+            servicePlace,
+        });
 
         if (input.targetStatus === OrderStatus.PAID) {
             if (!input.paymentMethodId) {
@@ -474,7 +489,7 @@ export async function persistOrderFromPayload(input: PersistOrderInput): Promise
                 paymentMethod: paymentMethodName,
                 cashReceived,
                 change,
-                notes: input.notes ? String(input.notes).trim() : null,
+                notes: encodedNotes,
                 orderedAt,
             };
 
@@ -506,7 +521,7 @@ export async function persistOrderFromPayload(input: PersistOrderInput): Promise
                     paymentMethod: paymentMethodName,
                     cashReceived,
                     change,
-                    notes: input.notes ? String(input.notes).trim() : null,
+                    notes: encodedNotes,
                     orderedAt,
                 },
                 select: { id: true },

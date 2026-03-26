@@ -1,4 +1,5 @@
 import { OrderValidationError, type OrderItemInput } from "@/lib/services/orders";
+import { SERVICE_PLACE_LIMITS, type ServicePlaceZone } from "@/lib/services/order-notes";
 import { stringOrNull, toNumber } from "@/lib/format";
 
 type NormalizeOptions = {
@@ -15,6 +16,8 @@ export type NormalizedOrderBody = {
     paymentMethodId: number | null;
     cashReceived: number | null;
     notes: string | null;
+    customerPlaceZone: ServicePlaceZone | null;
+    customerPlaceNumber: number | null;
 };
 
 function fail(field: string, message: string): never {
@@ -166,6 +169,38 @@ export function normalizeOrderBody(body: unknown, options: NormalizeOptions): No
         fail("notes", "Catatan maksimal 500 karakter.");
     }
 
+    let customerPlaceZone: ServicePlaceZone | null = null;
+    if (hasInput(payload.customer_place_zone)) {
+        const parsedZone = String(payload.customer_place_zone);
+        if (!(parsedZone in SERVICE_PLACE_LIMITS)) {
+            fail("customer_place_zone", "Ruangan customer tidak valid.");
+        }
+
+        customerPlaceZone = parsedZone as ServicePlaceZone;
+    }
+
+    let customerPlaceNumber: number | null = null;
+    if (hasInput(payload.customer_place_number)) {
+        const parsedNumber = Number(payload.customer_place_number);
+        if (!Number.isInteger(parsedNumber) || parsedNumber <= 0) {
+            fail("customer_place_number", "Nomor tempat customer tidak valid.");
+        }
+
+        customerPlaceNumber = parsedNumber;
+    }
+
+    if (customerPlaceZone && customerPlaceNumber === null) {
+        fail("customer_place_number", "Nomor tempat customer wajib dipilih.");
+    }
+
+    if (!customerPlaceZone && customerPlaceNumber !== null) {
+        fail("customer_place_zone", "Ruangan customer wajib dipilih.");
+    }
+
+    if (customerPlaceZone && customerPlaceNumber !== null && customerPlaceNumber > SERVICE_PLACE_LIMITS[customerPlaceZone]) {
+        fail("customer_place_number", "Nomor tempat customer tidak sesuai dengan ruangan yang dipilih.");
+    }
+
     return {
         items,
         discountType,
@@ -176,5 +211,7 @@ export function normalizeOrderBody(body: unknown, options: NormalizeOptions): No
         paymentMethodId,
         cashReceived,
         notes,
+        customerPlaceZone,
+        customerPlaceNumber,
     };
 }

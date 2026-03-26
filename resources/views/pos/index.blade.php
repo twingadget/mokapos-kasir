@@ -52,6 +52,7 @@
         'total' => (float) $order->total,
         'updated_at' => optional($order->updated_at)?->toIso8601String(),
         'waiter_name' => $order->waiter?->name ?? $order->user?->name ?? '-',
+        'place_label' => $order->place_label ?? null,
     ])->values();
 @endphp
 
@@ -67,6 +68,50 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .customer-place-number-grid {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+
+        .customer-place-number-btn {
+            width: 100%;
+            min-width: 0;
+            height: 3rem;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            border: 1px solid #3A3A3A;
+            border-radius: 0.9rem;
+            background: #171717;
+            color: #F5F5F5;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1;
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .customer-place-number-btn:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            background: #1D1D1D;
+        }
+
+        @media (max-width: 640px) {
+            .customer-place-number-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.625rem;
+            }
+
+            .customer-place-number-btn {
+                height: 2.75rem;
+                border-radius: 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body class="body-gradient-page h-screen overflow-hidden">
     <div
@@ -335,7 +380,7 @@
                                     <button type="button" class="moka-btn-secondary w-full justify-center text-base" :disabled="cart.length === 0 || isSubmitting || editingOpenBillId" @click="cancelBillOpen = true">
                                         Cancel Order
                                     </button>
-                                    <button type="button" class="moka-btn w-full justify-center text-base" :disabled="cart.length === 0 || isSubmitting" @click="submitWaiterOrder()">
+                                    <button type="button" class="moka-btn w-full justify-center text-base" :disabled="cart.length === 0 || isSubmitting" @click="openCustomerPlaceModal()">
                                         <span x-show="!isSubmitting">Kirim ke Kasir</span>
                                         <span x-show="isSubmitting">Mengirim...</span>
                                     </button>
@@ -424,6 +469,7 @@
                                 <div>
                                     <p class="font-semibold text-moka-ink">Pesanan #<span x-text="order.id"></span></p>
                                     <p class="text-xs text-moka-muted" x-text="order.waiter_name ? `Waiter: ${order.waiter_name}` : 'Waiter: -'"></p>
+                                    <p class="text-xs text-moka-muted" x-text="order.place_label ? `Tempat: ${order.place_label}` : 'Tempat: -'"></p>
                                     <p class="text-xs text-moka-muted" x-text="`Update: ${formatDateTime(order.updated_at)}`"></p>
                                     <p class="mt-1 text-sm font-semibold text-moka-primary text-money" x-text="formatCurrency(order.total)"></p>
                                 </div>
@@ -478,6 +524,71 @@
                 <div class="moka-modal-footer">
                     <button type="button" class="moka-btn-secondary" @click="cancelBillOpen = false">Tidak</button>
                     <button type="button" class="moka-btn-danger" @click="confirmCancelBill()">Ya</button>
+                </div>
+            </div>
+        </x-ui.modal>
+        <x-ui.modal name="customerPlaceOpen" maxWidth="lg">
+            <div class="moka-modal-content">
+                <div class="moka-modal-header">
+                    <div>
+                        <h3 class="moka-modal-title">Pilih Tempat Customer</h3>
+                        <p class="moka-modal-subtitle">Tentukan ruangan dan nomor tempat sebelum kirim ke kasir.</p>
+                    </div>
+                    <button type="button" class="moka-modal-close" @click="customerPlaceOpen = false" aria-label="Tutup popup">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M6 6l12 12M18 6l-12 12" stroke-width="1.8" stroke-linecap="round"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="mt-4 space-y-4">
+                    <div>
+                        <p class="moka-label">Ruangan</p>
+                        <div class="grid gap-2 sm:grid-cols-3">
+                            <button type="button" class="rounded-xl border border-moka-line bg-moka-card px-4 py-3 text-left transition hover:border-moka-primary/40" :class="customerPlaceZone === 'Table' ? 'border-moka-primary bg-moka-soft/60' : ''" @click="customerPlaceZone = 'Table'; customerPlaceNumber = ''">
+                                <p class="font-semibold text-moka-ink">Table</p>
+                                <p class="text-xs text-moka-muted">No 1 - 12</p>
+                            </button>
+                            <button type="button" class="rounded-xl border border-moka-line bg-moka-card px-4 py-3 text-left transition hover:border-moka-primary/40" :class="customerPlaceZone === 'Sofa' ? 'border-moka-primary bg-moka-soft/60' : ''" @click="customerPlaceZone = 'Sofa'; customerPlaceNumber = ''">
+                                <p class="font-semibold text-moka-ink">Sofa</p>
+                                <p class="text-xs text-moka-muted">No 1 - 5</p>
+                            </button>
+                            <button type="button" class="rounded-xl border border-moka-line bg-moka-card px-4 py-3 text-left transition hover:border-moka-primary/40" :class="customerPlaceZone === 'VIP' ? 'border-moka-primary bg-moka-soft/60' : ''" @click="customerPlaceZone = 'VIP'; customerPlaceNumber = ''">
+                                <p class="font-semibold text-moka-ink">VIP</p>
+                                <p class="text-xs text-moka-muted">No 1 - 7</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <template x-if="customerPlaceZone">
+                        <div>
+                            <p class="moka-label">Nomor Tempat</p>
+                            <div class="customer-place-number-grid">
+                                <template x-for="number in customerPlaceNumbers()" :key="`${customerPlaceZone}-${number}`">
+                                    <button
+                                        type="button"
+                                        class="customer-place-number-btn"
+                                        :style="String(customerPlaceNumber) === String(number)
+                                            ? 'border-color:#D4AF37;background:#232323;color:#D4AF37;box-shadow:inset 0 0 0 1px rgba(212,175,55,0.28);'
+                                            : 'box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02);'"
+                                        @click="customerPlaceNumber = String(number)"
+                                    >
+                                        <span x-text="number"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div class="rounded-xl border border-moka-line bg-moka-card px-4 py-3">
+                        <p class="text-xs uppercase tracking-wide text-moka-muted">Pilihan Tempat</p>
+                        <p class="mt-1 font-semibold text-moka-ink" x-text="selectedCustomerPlaceLabel || 'Belum dipilih'"></p>
+                    </div>
+                </div>
+
+                <div class="moka-modal-footer">
+                    <button type="button" class="moka-btn-secondary" @click="customerPlaceOpen = false">Batal</button>
+                    <button type="button" class="moka-btn" :disabled="isSubmitting" @click="submitWaiterOrder()">Kirim ke Kasir</button>
                 </div>
             </div>
         </x-ui.modal>
@@ -617,6 +728,13 @@
                     </button>
                 </div>
 
+                <template x-if="selectedCustomerPlaceLabel">
+                    <div class="mt-4 rounded-xl border border-moka-line bg-moka-card px-4 py-3 text-sm">
+                        <p class="text-xs uppercase tracking-wide text-moka-muted">Tempat Customer</p>
+                        <p class="mt-1 font-semibold text-moka-ink" x-text="selectedCustomerPlaceLabel"></p>
+                    </div>
+                </template>
+
                 <div class="moka-modal-footer">
                     <button type="button" class="moka-btn-secondary" @click="confirmPaymentOpen = false">Cancel</button>
                     <button type="button" class="moka-btn" @click="continueToPayment()">Lanjut</button>
@@ -675,6 +793,13 @@
                             <label class="moka-label">Catatan Order</label>
                             <textarea rows="2" class="w-full rounded-xl border-moka-line text-sm text-moka-ink focus:border-moka-primary focus:ring-moka-primary/20" x-model="orderNotes" placeholder="Catatan umum transaksi..."></textarea>
                         </div>
+
+                        <template x-if="selectedCustomerPlaceLabel">
+                            <div class="rounded-xl border border-moka-line bg-moka-card px-4 py-3">
+                                <p class="text-xs uppercase tracking-wide text-moka-muted">Tempat Customer</p>
+                                <p class="mt-1 font-semibold text-moka-ink" x-text="selectedCustomerPlaceLabel"></p>
+                            </div>
+                        </template>
 
                         <dl class="rounded-xl border border-moka-line bg-moka-card p-4 text-sm text-moka-muted">
                             <div class="flex items-center justify-between">
@@ -784,6 +909,13 @@
                 taxPercentInput: '10%',
                 service: '',
                 orderNotes: '',
+                customerPlaceConfig: {
+                    Table: 12,
+                    Sofa: 5,
+                    VIP: 7,
+                },
+                customerPlaceZone: '',
+                customerPlaceNumber: '',
                 selectedPaymentMethodId: null,
                 cashReceived: '',
                 alertOpen: false,
@@ -809,6 +941,7 @@
                 orderSentMessage: '',
                 confirmPaymentOpen: false,
                 paymentOpen: false,
+                customerPlaceOpen: false,
                 isSubmitting: false,
                 clockLabel: '',
                 mobileTab: 'menu',
@@ -848,7 +981,7 @@
                         if (event.key === 'Enter' && event.ctrlKey) {
                             event.preventDefault();
                             if (this.mode === 'waiter') {
-                                this.submitWaiterOrder();
+                                this.openCustomerPlaceModal();
                             } else {
                                 this.openPayment();
                             }
@@ -865,6 +998,7 @@
                             this.alertOpen = false;
                             this.confirmPaymentOpen = false;
                             this.paymentOpen = false;
+                            this.customerPlaceOpen = false;
                         }
                     });
                 },
@@ -927,6 +1061,11 @@
                 openWaiterOrdersModal() {
                     this.waiterOrdersOpen = true;
                     this.waiterOrdersHasNew = false;
+                },
+
+                customerPlaceNumbers() {
+                    const max = this.customerPlaceConfig[this.customerPlaceZone] ?? 0;
+                    return Array.from({ length: max }, (_, index) => index + 1);
                 },
 
                 continueOpenBill(openBillId) {
@@ -1015,6 +1154,13 @@
                 get firstFilteredProduct() {
                     return this.filteredProducts[0] ?? null;
                 },
+
+                get selectedCustomerPlaceLabel() {
+                    return this.customerPlaceZone && this.customerPlaceNumber
+                        ? `${this.customerPlaceZone} No ${this.customerPlaceNumber}`
+                        : '';
+                },
+
                 get selectedPaymentMethod() {
                     return this.paymentMethods.find((method) => method.id === this.selectedPaymentMethodId) ?? null;
                 },
@@ -1113,6 +1259,29 @@
                     this.selectProduct(this.firstFilteredProduct);
                 },
 
+                openCustomerPlaceModal() {
+                    if (this.cart.length === 0) {
+                        this.showAlert('Validasi', 'Keranjang masih kosong.', 'warning');
+                        return;
+                    }
+
+                    this.customerPlaceOpen = true;
+                },
+
+                ensureCustomerPlaceSelected() {
+                    if (this.mode !== 'waiter') {
+                        return true;
+                    }
+
+                    if (!this.customerPlaceZone || !this.customerPlaceNumber) {
+                        this.customerPlaceOpen = true;
+                        this.showAlert('Validasi', 'Silakan pilih ruangan dan nomor tempat terlebih dahulu.', 'warning');
+                        return false;
+                    }
+
+                    return true;
+                },
+
                 hydrateFromDraft(draft, source = 'OPEN_BILL') {
                     if (!draft || !Array.isArray(draft.items)) {
                         return;
@@ -1125,6 +1294,8 @@
                     this.taxPercentInput = this.normalizeTaxPercentInput(draft.tax_percent ?? 10);
                     this.service = `${draft.service ?? 0}`;
                     this.orderNotes = draft.notes ?? '';
+                    this.customerPlaceZone = draft.customer_place_zone ?? '';
+                    this.customerPlaceNumber = draft.customer_place_number ? String(draft.customer_place_number) : '';
                     this.cart = draft.items.map((item) => ({
                         uid: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
                         product_id: item.product_id,
@@ -1333,7 +1504,10 @@
                     this.taxPercentInput = this.normalizeTaxPercentInput(10);
                     this.service = '';
                     this.orderNotes = '';
+                    this.customerPlaceZone = '';
+                    this.customerPlaceNumber = '';
                     this.cashReceived = '';
+                    this.customerPlaceOpen = false;
                     this.editingOpenBillId = null;
                     this.editingDraftSource = null;
                     this.mobileTab = this.isMobile() ? 'menu' : this.mobileTab;
@@ -1387,6 +1561,8 @@
                                 tax_percent: this.taxPercentValue,
                                 service: this.numberValue(this.service),
                                 notes: this.orderNotes,
+                                customer_place_zone: this.customerPlaceZone || null,
+                                customer_place_number: this.customerPlaceNumber ? Number(this.customerPlaceNumber) : null,
                             }),
                         });
 
@@ -1447,6 +1623,10 @@
                         return;
                     }
 
+                    if (!this.ensureCustomerPlaceSelected()) {
+                        return;
+                    }
+
                     this.isSubmitting = true;
 
                     try {
@@ -1470,6 +1650,8 @@
                                 tax_percent: this.taxPercentValue,
                                 service: this.numberValue(this.service),
                                 notes: this.orderNotes,
+                                customer_place_zone: this.customerPlaceZone || null,
+                                customer_place_number: this.customerPlaceNumber ? Number(this.customerPlaceNumber) : null,
                             }),
                         });
 
@@ -1484,6 +1666,7 @@
                             return;
                         }
 
+                        this.customerPlaceOpen = false;
                         this.orderSentMessage = data.message || 'Pesanan berhasil dikirim ke kasir.';
                         this.orderSentOpen = true;
                     } catch (error) {
@@ -1501,6 +1684,11 @@
 
                     if (this.cart.length === 0) {
                         this.showAlert('Validasi', 'Keranjang masih kosong.', 'warning');
+                        return;
+                    }
+
+                    if (this.editingDraftSource === 'WAITING') {
+                        this.continueToPayment();
                         return;
                     }
 
@@ -1549,6 +1737,8 @@
                                 payment_method_id: this.selectedPaymentMethodId,
                                 cash_received: this.isCashMethod() ? this.numberValue(this.cashReceived) : null,
                                 notes: this.orderNotes,
+                                customer_place_zone: this.customerPlaceZone || null,
+                                customer_place_number: this.customerPlaceNumber ? Number(this.customerPlaceNumber) : null,
                             }),
                         });
 
