@@ -1,0 +1,14 @@
+   ▲ Next.js 15.5.12
+   - Local:        http://localhost:3010
+   - Network:      http://192.168.1.9:3010
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 4.1s
+ ○ Compiling /login/submit ...
+ ✓ Compiled /login/submit in 1767ms (308 modules)
+ POST /login/submit 303 in 2582ms
+ ○ Compiling /admin/reports ...
+ ✓ Compiled /admin/reports in 2.9s (646 modules)
+ GET /admin/reports 307 in 3684ms
+[?25h
