@@ -2,6 +2,9 @@
 @php
     $mode = $mode ?? 'kasir';
     $isWaiter = $mode === 'waiter';
+    $isManager = auth()->user()?->isManager();
+    $sessionTitle = $isWaiter ? 'Waiter' : ($isManager ? 'Manager POS' : 'POS Kasir');
+    $sessionLabel = $isWaiter ? 'Waiter Online' : ($isManager ? 'Manager Online' : 'Kasir Online');
 
     $categoryPayload = $categories->map(fn ($category) => [
         'id' => $category->id,
@@ -62,7 +65,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $isWaiter ? 'Waiter' : 'POS Kasir' }} | {{ config('app.name', 'Moka POS') }}</title>
+    <title>{{ $sessionTitle }} | {{ config('app.name', 'Moka POS') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -145,7 +148,7 @@
                     <img src="{{ asset('logo.png') }}" alt="Moka POS" class="h-10 w-10 rounded-xl border border-moka-line object-cover">
                     <div>
                         <p class="font-display text-base font-bold text-moka-ink">Moka POS - Solvix Bar</p>
-                        <p class="text-xs text-moka-muted">{{ $isWaiter ? 'Waiter Online' : 'Kasir Online' }}</p>
+                        <p class="text-xs text-moka-muted">{{ $sessionLabel }}</p>
                     </div>
                 </div>
 
@@ -698,7 +701,7 @@
                 <div class="moka-modal-header">
                     <div>
                         <h3 class="moka-modal-title">Konfirmasi Logout</h3>
-                        <p class="moka-modal-subtitle">Yakin ingin keluar dari sesi kasir?</p>
+                        <p class="moka-modal-subtitle">Yakin ingin keluar dari sesi ini?</p>
                     </div>
                     <button type="button" class="moka-modal-close" @click="logoutOpen = false" aria-label="Tutup popup">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1771,6 +1774,4 @@
     </script>
 </body>
 </html>
-
-
 

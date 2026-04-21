@@ -31,10 +31,14 @@
         <div
             x-show="{{ $name }}"
             x-transition.opacity.duration.200ms
-            class="moka-modal-shell absolute w-[calc(100vw-2rem)] overflow-hidden"
-            style="left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: {{ $maxWidthValue }};"
+            class="relative flex min-h-full items-center justify-center p-4 sm:p-6"
         >
-            {{ $slot }}
+            <div
+                class="moka-modal-shell pointer-events-auto w-full overflow-y-auto overscroll-contain"
+                style="max-width: {{ $maxWidthValue }}; max-height: calc(100dvh - 2rem);"
+            >
+                {{ $slot }}
+            </div>
         </div>
     </div>
 </template>
