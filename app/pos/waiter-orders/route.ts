@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { readSessionUser } from "@/lib/auth";
 import { toNumber } from "@/lib/format";
+import { canUsePos } from "@/lib/roles";
 import { decodeOrderNotes, formatServicePlaceLabel } from "@/lib/services/order-notes";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ message: "Unauthenticated." }, { status: 401 });
     }
 
-    if (user.role !== "kasir") {
+    if (!canUsePos(user.role)) {
         return NextResponse.json({ message: "Forbidden." }, { status: 403 });
     }
 

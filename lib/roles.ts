@@ -16,6 +16,10 @@ export function isWaiter(role: Role): boolean {
     return role === "waiter";
 }
 
+export function canUsePos(role: Role): boolean {
+    return role === "kasir" || role === "manager";
+}
+
 export function canAccessAdminPanel(role: Role): boolean {
     return role === "admin" || role === "manager";
 }

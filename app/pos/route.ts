@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readSessionUser } from "@/lib/auth";
+import { canUsePos } from "@/lib/roles";
 import { getPosBootstrapData } from "@/lib/services/pos-data";
 import { renderPosPage } from "@/lib/templates/pos";
 
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         return NextResponse.redirect(new URL("/login", request.url), { status: 303 });
     }
 
-    if (user.role !== "kasir") {
+    if (!canUsePos(user.role)) {
         return new NextResponse("Forbidden", { status: 403 });
     }
 

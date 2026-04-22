@@ -43,7 +43,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
                         <div className="mb-6">
                             <h1 className="font-display text-2xl font-bold text-moka-ink">Masuk ke Moka Kasir</h1>
-                            <p className="mt-1 text-sm text-moka-muted">Gunakan akun admin atau kasir untuk mulai operasional.</p>
+                            <p className="mt-1 text-sm text-moka-muted">Gunakan akun admin, manager, atau kasir untuk mulai operasional.</p>
                         </div>
 
                         <LoginForm initialError={params.error} redirect={params.redirect} />

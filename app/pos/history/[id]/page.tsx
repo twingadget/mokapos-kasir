@@ -21,7 +21,7 @@ function discountLabel(order: { discountType: string; discountValue: number }): 
 }
 
 export default async function PosOrderDetailPage({ params }: PosOrderDetailPageProps) {
-    const user = await requireServerSessionUser(["kasir"]);
+    const user = await requireServerSessionUser(["kasir", "manager"]);
     const routeParams = await params;
     const id = Number(routeParams.id);
 

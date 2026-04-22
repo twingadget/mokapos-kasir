@@ -227,7 +227,7 @@ function transformModalTag(template: string): string {
         return `<template x-teleport="body">
     <div x-cloak x-show="${name}" x-on:keydown.escape.window="${name} = false" class="fixed inset-0 z-[120]">
         <div x-show="${name}" x-transition.opacity.duration.200ms x-on:click="${name} = false" class="absolute inset-0 moka-modal-overlay backdrop-blur-sm"></div>
-        <div x-show="${name}" x-transition.opacity.duration.200ms class="moka-modal-shell absolute w-[calc(100vw-2rem)] overflow-hidden" style="left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: ${maxWidthValue};">`;
+        <div x-show="${name}" x-transition.opacity.duration.200ms class="moka-modal-shell absolute w-[calc(100vw-2rem)] overflow-y-auto overscroll-contain" style="left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: ${maxWidthValue}; max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem);">`;
     });
 
     transformed = transformed.replace(/<\/x-ui\.modal>/g, "</div></div></template>");
@@ -314,6 +314,9 @@ function toHtmlAttributeJs(value: unknown): string {
 
 export function renderPosPage(data: PosTemplateData): string {
     const isWaiter = data.mode === "waiter";
+    const isManager = data.user.role === "manager";
+    const sessionTitle = isWaiter ? "Waiter" : isManager ? "Manager POS" : "POS Kasir";
+    const sessionLabel = isWaiter ? "Waiter Online" : isManager ? "Manager Online" : "Kasir Online";
     let html = stripLeadingPhpBlock(loadSourceTemplate());
     const viteAssetTags = `${resolveViteAssetTags()}\n    ${runtimeFallbackScriptTag()}`;
 
@@ -329,8 +332,10 @@ export function renderPosPage(data: PosTemplateData): string {
         ["{{ route('logout') }}", "/logout"],
         ["{{ route('profile.edit') }}", "/profile"],
         ["{{ auth()->user()->name }}", escapeHtml(data.user.name)],
-        ["{{ $isWaiter ? 'Waiter' : 'POS Kasir' }}", isWaiter ? "Waiter" : "POS Kasir"],
-        ["{{ $isWaiter ? 'Waiter Online' : 'Kasir Online' }}", isWaiter ? "Waiter Online" : "Kasir Online"],
+        ["{{ $sessionTitle }}", sessionTitle],
+        ["{{ $sessionLabel }}", sessionLabel],
+        ["{{ $isWaiter ? 'Waiter' : 'POS Kasir' }}", sessionTitle],
+        ["{{ $isWaiter ? 'Waiter Online' : 'Kasir Online' }}", sessionLabel],
         ["{{ $isWaiter ? route('waiter.history') : route('pos.history') }}", isWaiter ? "/waiter/history" : "/pos/history"],
         ["{{ $isWaiter ? 'Riwayat Pesanan' : 'Riwayat Hari Ini' }}", isWaiter ? "Riwayat Pesanan" : "Riwayat Hari Ini"],
         ["{{ Illuminate\\Support\\Js::from($categoryPayload) }}", toHtmlAttributeJs(data.payload.categories)],

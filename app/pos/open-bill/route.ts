@@ -1,6 +1,7 @@
 import { OrderStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { readSessionUser } from "@/lib/auth";
+import { canUsePos } from "@/lib/roles";
 import { normalizeOrderBody } from "@/lib/services/order-payload";
 import { OrderValidationError, persistOrderFromPayload } from "@/lib/services/orders";
 
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ message: "Unauthenticated." }, { status: 401 });
     }
 
-    if (user.role !== "kasir") {
+    if (!canUsePos(user.role)) {
         return NextResponse.json({ message: "Forbidden." }, { status: 403 });
     }
 

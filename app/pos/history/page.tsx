@@ -36,7 +36,7 @@ type PosHistoryPageProps = {
 };
 
 export default async function PosHistoryPage({ searchParams }: PosHistoryPageProps) {
-    const user = await requireServerSessionUser(["kasir"]);
+    const user = await requireServerSessionUser(["kasir", "manager"]);
     const params = await searchParams;
     const page = Math.max(1, Number.parseInt(String(params.page ?? "1"), 10) || 1);
     const perPage = 20;
