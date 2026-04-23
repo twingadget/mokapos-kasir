@@ -5,7 +5,7 @@ import Badge from "@/components/Badge";
 import ConfirmModalAction from "@/components/ConfirmModalAction";
 import Pagination from "@/components/Pagination";
 import { formatCurrency, formatDateTime, formatNumber } from "@/lib/format";
-import { displayInvoice } from "@/lib/services/order-access";
+import { canDeleteOpenBillOrder, displayInvoice } from "@/lib/services/order-access";
 import { getReportData, resolveDateRange } from "@/lib/services/reports";
 import { requireServerSessionUser } from "@/lib/server-auth";
 
@@ -242,6 +242,26 @@ export default async function AdminReportsPage({ searchParams }: ReportsPageProp
                                                             >
                                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                     <path d="M6 6l12 12M18 6l-12 12" strokeWidth="2" strokeLinecap="round" />
+                                                                </svg>
+                                                            </ConfirmModalAction>
+                                                        </form>
+                                                    ) : null}
+                                                    {canDeleteOpenBillOrder(user, order) ? (
+                                                        <form id={`delete-report-order-${order.id}`} method="POST" action={`/admin/orders/${order.id}/delete`}>
+                                                            <ConfirmModalAction
+                                                                formId={`delete-report-order-${order.id}`}
+                                                                title="Hapus Open Bill"
+                                                                subtitle="Hapus open bill ini secara permanen? Stok produk akan dikembalikan."
+                                                                confirmLabel="Ya, Hapus"
+                                                                cancelLabel="Tidak"
+                                                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#A84D4D] text-[#FF9B9B] transition hover:border-[#C05D5D] hover:bg-[#321B1B]"
+                                                                ariaLabel="Hapus open bill"
+                                                            >
+                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                                    <path d="M9 3h6" strokeWidth="2" strokeLinecap="round" />
+                                                                    <path d="M4 7h16" strokeWidth="2" strokeLinecap="round" />
+                                                                    <path d="M7 7l1 13a1 1 0 001 1h6a1 1 0 001-1l1-13" strokeWidth="2" strokeLinecap="round" />
+                                                                    <path d="M10 11v5M14 11v5" strokeWidth="2" strokeLinecap="round" />
                                                                 </svg>
                                                             </ConfirmModalAction>
                                                         </form>

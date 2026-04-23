@@ -9,6 +9,35 @@ type Context = {
     params: Promise<{ id: string }>;
 };
 
+function resolveRedirectTarget(request: NextRequest, orderId: number): URL {
+    const fallback = new URL("/admin/orders", request.url);
+    const referer = request.headers.get("referer");
+
+    if (!referer) {
+        return fallback;
+    }
+
+    try {
+        const refererUrl = new URL(referer);
+        const requestUrl = new URL(request.url);
+        if (refererUrl.origin !== requestUrl.origin) {
+            return fallback;
+        }
+
+        if (refererUrl.pathname === `/admin/orders/${orderId}`) {
+            return fallback;
+        }
+
+        if (refererUrl.pathname.startsWith("/admin/orders") || refererUrl.pathname.startsWith("/admin/reports")) {
+            return new URL(`${refererUrl.pathname}${refererUrl.search}`, request.url);
+        }
+    } catch {
+        return fallback;
+    }
+
+    return fallback;
+}
+
 export async function POST(request: NextRequest, context: Context): Promise<NextResponse> {
     const user = readSessionUser(request);
     if (!user || user.role !== "admin") {
@@ -22,7 +51,7 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
         return NextResponse.redirect(new URL("/admin/orders", request.url), { status: 303 });
     }
 
-    let voided = false;
+    let deleted = false;
 
     await prisma.$transaction(async (tx) => {
         const order = await tx.order.findUnique({
@@ -41,29 +70,20 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
             },
         });
 
-        if (!order || order.status !== OrderStatus.WAITING) {
+        if (!order || order.status !== OrderStatus.OPEN_BILL) {
             return;
         }
 
         await restoreStockFromOrder(tx, order);
-
-        await tx.order.update({
-            where: { id: order.id },
-            data: {
-                status: OrderStatus.VOID,
-                paymentMethod: "CANCELED",
-            },
-        });
-
-        voided = true;
+        await tx.order.delete({ where: { id: order.id } });
+        deleted = true;
     });
 
-    const referer = request.headers.get("referer");
-    const response = NextResponse.redirect(new URL(referer || "/admin/orders", request.url), { status: 303 });
+    const response = NextResponse.redirect(resolveRedirectTarget(request, id), { status: 303 });
 
-    if (voided) {
-        return withFlash(response, { type: "success", message: "Pesanan berhasil dibatalkan." });
+    if (deleted) {
+        return withFlash(response, { type: "success", message: "Open bill berhasil dihapus." });
     }
 
-    return withFlash(response, { type: "error", message: "Pesanan tidak bisa dibatalkan." });
+    return withFlash(response, { type: "error", message: "Open bill tidak bisa dihapus." });
 }

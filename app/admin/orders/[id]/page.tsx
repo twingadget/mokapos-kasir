@@ -7,7 +7,7 @@ import ConfirmModalAction from "@/components/ConfirmModalAction";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { decodeOrderNotes, formatServicePlaceLabel } from "@/lib/services/order-notes";
-import { canVoidOrder, displayInvoice } from "@/lib/services/order-access";
+import { canDeleteOpenBillOrder, canVoidOrder, displayInvoice } from "@/lib/services/order-access";
 import { requireServerSessionUser } from "@/lib/server-auth";
 
 type AdminOrderDetailPageProps = {
@@ -70,6 +70,20 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                         <Link href={`/orders/${order.id}/receipt`} className="moka-btn-secondary">
                             Cetak Ulang
                         </Link>
+                    ) : null}
+                    {canDeleteOpenBillOrder(user, order) ? (
+                        <form id={`delete-order-${order.id}`} method="POST" action={`/admin/orders/${order.id}/delete`}>
+                            <ConfirmModalAction
+                                formId={`delete-order-${order.id}`}
+                                title="Hapus Open Bill"
+                                subtitle="Hapus open bill ini secara permanen? Stok produk akan dikembalikan."
+                                confirmLabel="Ya, Hapus"
+                                cancelLabel="Tidak"
+                                className="moka-btn-danger"
+                            >
+                                Hapus Open Bill
+                            </ConfirmModalAction>
+                        </form>
                     ) : null}
                     {canVoidOrder(user, order) ? (
                         <form id={`void-order-${order.id}`} method="POST" action={`/admin/orders/${order.id}/void`}>

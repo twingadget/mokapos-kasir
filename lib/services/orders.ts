@@ -259,7 +259,7 @@ async function computeValidatedItems(
     return { computedItems, subtotal: Math.round(subtotal * 100) / 100 };
 }
 
-async function restoreStockFromOrder(
+export async function restoreStockFromOrder(
     tx: Prisma.TransactionClient,
     order: {
         items: Array<{ qty: number; productId: number; product: { trackStock: boolean } | null }>;

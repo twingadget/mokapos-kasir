@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { SessionUser } from "@/lib/auth";
 import FlashSessionModal from "@/components/FlashSessionModal";
-import { canAccessAdminPanel, canUsePos, isWaiter } from "@/lib/roles";
+import { canAccessAdminPanel, isWaiter } from "@/lib/roles";
 
 type AppShellProps = {
     user: SessionUser;
@@ -27,18 +27,6 @@ export default function AppShell({ user, active, children }: AppShellProps) {
     const [logoutOpen, setLogoutOpen] = useState(false);
 
     const navItems = useMemo<NavItem[]>(() => {
-        if (user.role === "manager") {
-            return [
-                { href: "/pos", label: "POS", activeKey: "manager.pos" },
-                { href: "/admin/reports", label: "Laporan", activeKey: "admin.reports" },
-                { href: "/admin/orders", label: "Order", activeKey: "admin.orders" },
-                { href: "/admin/products", label: "Produk", activeKey: "admin.products" },
-                { href: "/admin/categories", label: "Kategori", activeKey: "admin.categories" },
-                { href: "/admin/payment-methods", label: "Metode Bayar", activeKey: "admin.payment-methods" },
-                { href: "/admin/staff", label: "Staff", activeKey: "admin.staff" },
-            ];
-        }
-
         if (canAccessAdminPanel(user.role)) {
             return [
                 { href: "/admin/reports", label: "Laporan", activeKey: "admin.reports" },
@@ -57,14 +45,10 @@ export default function AppShell({ user, active, children }: AppShellProps) {
             ];
         }
 
-        if (canUsePos(user.role)) {
-            return [
-                { href: "/pos", label: "POS", activeKey: "pos.index" },
-                { href: "/pos/history", label: "Riwayat", activeKey: "pos.history" },
-            ];
-        }
-
-        return [];
+        return [
+            { href: "/pos", label: "POS", activeKey: "pos.index" },
+            { href: "/pos/history", label: "Riwayat", activeKey: "pos.history" },
+        ];
     }, [user.role]);
 
     const isActive = (item: NavItem): boolean => active === item.activeKey;

@@ -17,6 +17,10 @@ export function canVoidOrder(user: SessionUser, order: { status: OrderStatus }):
     return user.role === "admin" && order.status === OrderStatus.WAITING;
 }
 
+export function canDeleteOpenBillOrder(user: SessionUser, order: { status: OrderStatus }): boolean {
+    return user.role === "admin" && order.status === OrderStatus.OPEN_BILL;
+}
+
 export function displayInvoice(order: { status: OrderStatus; id: number; invoiceNo: string }): string {
     if (order.status === OrderStatus.OPEN_BILL) {
         return `Open Bill #${order.id}`;
