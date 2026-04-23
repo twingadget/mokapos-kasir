@@ -18,7 +18,11 @@ export function canVoidOrder(user: SessionUser, order: { status: OrderStatus }):
 }
 
 export function canDeleteOpenBillOrder(user: SessionUser, order: { status: OrderStatus }): boolean {
-    return user.role === "admin" && order.status === OrderStatus.OPEN_BILL;
+    void user;
+    void order;
+
+    // return user.role === "admin" && order.status === OrderStatus.OPEN_BILL;
+    return false;
 }
 
 export function displayInvoice(order: { status: OrderStatus; id: number; invoiceNo: string }): string {

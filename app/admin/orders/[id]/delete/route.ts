@@ -51,6 +51,10 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
         return NextResponse.redirect(new URL("/admin/orders", request.url), { status: 303 });
     }
 
+    // Temporary production hide: keep the delete implementation below for quick re-enable later.
+    const disabledResponse = NextResponse.redirect(resolveRedirectTarget(request, id), { status: 303 });
+    return withFlash(disabledResponse, { type: "error", message: "Fitur hapus open bill sedang disembunyikan sementara." });
+
     let deleted = false;
 
     await prisma.$transaction(async (tx) => {
