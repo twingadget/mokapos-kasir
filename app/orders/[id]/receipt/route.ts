@@ -1,7 +1,7 @@
 import { OrderStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { readSessionUser } from "@/lib/auth";
-import { canViewOrder } from "@/lib/services/order-access";
+import { canViewOrder, isOrderInActiveCashierSession } from "@/lib/services/order-access";
 import { prisma } from "@/lib/prisma";
 import { renderReceiptPage } from "@/lib/templates/receipt";
 
@@ -46,6 +46,10 @@ export async function GET(request: NextRequest, context: Context): Promise<NextR
 
     if (!canViewOrder(user, order)) {
         return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    if (!isOrderInActiveCashierSession(user, order)) {
+        return NextResponse.redirect(new URL("/pos/history", request.url), { status: 303 });
     }
 
     const autoPrint = request.nextUrl.searchParams.get("autoprint") === "1";

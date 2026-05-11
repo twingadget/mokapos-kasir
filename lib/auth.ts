@@ -20,6 +20,7 @@ export type SessionUser = {
     name: string;
     email: string;
     role: Role;
+    sessionStartedAt: number;
 };
 
 type SessionTokenPayload = {
@@ -27,6 +28,7 @@ type SessionTokenPayload = {
     name: string;
     email: string;
     role: Role;
+    iat?: number;
     exp: number;
 };
 
@@ -70,7 +72,8 @@ function decodeToken(token: string): SessionTokenPayload | null {
             typeof payload.name !== "string" ||
             typeof payload.email !== "string" ||
             typeof payload.role !== "string" ||
-            typeof payload.exp !== "number"
+            typeof payload.exp !== "number" ||
+            (payload.iat !== undefined && typeof payload.iat !== "number")
         ) {
             return null;
         }
@@ -100,6 +103,7 @@ export function readSessionUserFromToken(token: string | undefined | null): Sess
         name: payload.name,
         email: payload.email,
         role: payload.role,
+        sessionStartedAt: payload.iat ?? payload.exp - SESSION_TTL_SECONDS,
     };
 }
 
@@ -123,13 +127,18 @@ export function redirectToLogin(request: NextRequest): NextResponse {
     return NextResponse.redirect(loginUrl);
 }
 
-export function attachSession(response: NextResponse, user: SessionUser): NextResponse {
+export function attachSession(
+    response: NextResponse,
+    user: Omit<SessionUser, "sessionStartedAt">,
+): NextResponse {
+    const issuedAt = Math.floor(Date.now() / 1000);
     const payload: SessionTokenPayload = {
         sub: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
-        exp: Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS,
+        iat: issuedAt,
+        exp: issuedAt + SESSION_TTL_SECONDS,
     };
 
     response.cookies.set(SESSION_COOKIE, encodeToken(payload), {

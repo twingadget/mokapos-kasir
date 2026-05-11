@@ -25,6 +25,23 @@ export function canDeleteOpenBillOrder(user: SessionUser, order: { status: Order
     return false;
 }
 
+export function resolveCashierSessionStart(user: SessionUser): Date | null {
+    if (user.role !== "kasir") {
+        return null;
+    }
+
+    return new Date(user.sessionStartedAt * 1000);
+}
+
+export function isOrderInActiveCashierSession(user: SessionUser, order: { orderedAt: Date }): boolean {
+    const sessionStart = resolveCashierSessionStart(user);
+    if (!sessionStart) {
+        return true;
+    }
+
+    return order.orderedAt.getTime() >= sessionStart.getTime();
+}
+
 export function displayInvoice(order: { status: OrderStatus; id: number; invoiceNo: string }): string {
     if (order.status === OrderStatus.OPEN_BILL) {
         return `Open Bill #${order.id}`;

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readSessionUser } from "@/lib/auth";
 import { canUsePos } from "@/lib/roles";
+import { resolveCashierSessionStart } from "@/lib/services/order-access";
 import { getPosBootstrapData } from "@/lib/services/pos-data";
 import { renderPosPage } from "@/lib/templates/pos";
 
@@ -22,6 +23,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         mode: "kasir",
         resumeOpenBillId: openBill ? Number(openBill) : null,
         resumeWaiterOrderId: waiterOrder ? Number(waiterOrder) : null,
+        sessionStartedAt: resolveCashierSessionStart(user),
     });
 
     const html = renderPosPage({

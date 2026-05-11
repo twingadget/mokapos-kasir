@@ -45,6 +45,14 @@ export default function AppShell({ user, active, children }: AppShellProps) {
             ];
         }
 
+        if (user.role === "kasir") {
+            return [
+                { href: "/pos", label: "POS", activeKey: "pos.index" },
+                { href: "/pos/stock", label: "Stok", activeKey: "pos.stock" },
+                { href: "/pos/history", label: "Riwayat", activeKey: "pos.history" },
+            ];
+        }
+
         return [
             { href: "/pos", label: "POS", activeKey: "pos.index" },
             { href: "/pos/history", label: "Riwayat", activeKey: "pos.history" },

@@ -5,7 +5,7 @@ import Badge from "@/components/Badge";
 import Pagination from "@/components/Pagination";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
-import { displayInvoice } from "@/lib/services/order-access";
+import { displayInvoice, resolveCashierSessionStart } from "@/lib/services/order-access";
 import { decodeOrderNotes } from "@/lib/services/order-notes";
 import { requireServerSessionUser } from "@/lib/server-auth";
 
@@ -40,23 +40,31 @@ export default async function PosHistoryPage({ searchParams }: PosHistoryPagePro
     const params = await searchParams;
     const page = Math.max(1, Number.parseInt(String(params.page ?? "1"), 10) || 1);
     const perPage = 20;
-
+    const sessionStart = resolveCashierSessionStart(user);
     const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const dayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
     const ordersRaw = await prisma.order.findMany({
         where: {
             userId: user.id,
-            OR: [
-                { status: OrderStatus.OPEN_BILL },
-                {
-                    orderedAt: {
-                        gte: start,
-                        lte: end,
-                    },
-                },
-            ],
+            ...(sessionStart
+                ? {
+                      orderedAt: {
+                          gte: sessionStart,
+                      },
+                  }
+                : {
+                      OR: [
+                          { status: OrderStatus.OPEN_BILL },
+                          {
+                              orderedAt: {
+                                  gte: dayStart,
+                                  lte: dayEnd,
+                              },
+                          },
+                      ],
+                  }),
         },
         orderBy: { updatedAt: "desc" },
     });
@@ -85,7 +93,9 @@ export default async function PosHistoryPage({ searchParams }: PosHistoryPagePro
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 className="font-display text-2xl font-bold text-moka-ink">Riwayat Transaksi & Open Bill</h1>
-                    <p className="text-sm text-moka-muted">Open bill aktif milikmu dan riwayat transaksi hari ini.</p>
+                    <p className="text-sm text-moka-muted">
+                        {user.role === "kasir" ? "Open bill aktif dan riwayat transaksi sejak kamu login." : "Open bill aktif milikmu dan riwayat transaksi hari ini."}
+                    </p>
                 </div>
                 <Link href="/pos" className="moka-btn-secondary">
                     Kembali ke POS
@@ -174,7 +184,7 @@ export default async function PosHistoryPage({ searchParams }: PosHistoryPagePro
                             {pagedOrders.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} className="py-10 text-center text-sm text-moka-muted">
-                                        Belum ada transaksi hari ini.
+                                        {user.role === "kasir" ? "Belum ada transaksi pada sesi login ini." : "Belum ada transaksi hari ini."}
                                     </td>
                                 </tr>
                             ) : (
