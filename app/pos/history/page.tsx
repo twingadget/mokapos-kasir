@@ -5,7 +5,7 @@ import Badge from "@/components/Badge";
 import Pagination from "@/components/Pagination";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
-import { displayInvoice, resolveCashierSessionStart } from "@/lib/services/order-access";
+import { displayInvoice, isOrderVisibleInCashierHistory } from "@/lib/services/order-access";
 import { decodeOrderNotes } from "@/lib/services/order-notes";
 import { requireServerSessionUser } from "@/lib/server-auth";
 
@@ -40,36 +40,16 @@ export default async function PosHistoryPage({ searchParams }: PosHistoryPagePro
     const params = await searchParams;
     const page = Math.max(1, Number.parseInt(String(params.page ?? "1"), 10) || 1);
     const perPage = 20;
-    const sessionStart = resolveCashierSessionStart(user);
-    const now = new Date();
-    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-    const dayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
     const ordersRaw = await prisma.order.findMany({
         where: {
             userId: user.id,
-            ...(sessionStart
-                ? {
-                      orderedAt: {
-                          gte: sessionStart,
-                      },
-                  }
-                : {
-                      OR: [
-                          { status: OrderStatus.OPEN_BILL },
-                          {
-                              orderedAt: {
-                                  gte: dayStart,
-                                  lte: dayEnd,
-                              },
-                          },
-                      ],
-                  }),
         },
         orderBy: { updatedAt: "desc" },
     });
 
     const orders = ordersRaw
+        .filter((order) => isOrderVisibleInCashierHistory(user, order))
         .sort((a, b) => {
             if (a.status === OrderStatus.OPEN_BILL && b.status !== OrderStatus.OPEN_BILL) {
                 return -1;
@@ -94,7 +74,7 @@ export default async function PosHistoryPage({ searchParams }: PosHistoryPagePro
                 <div>
                     <h1 className="font-display text-2xl font-bold text-moka-ink">Riwayat Transaksi & Open Bill</h1>
                     <p className="text-sm text-moka-muted">
-                        {user.role === "kasir" ? "Open bill aktif dan riwayat transaksi sejak kamu login." : "Open bill aktif milikmu dan riwayat transaksi hari ini."}
+                        {user.role === "kasir" ? "Open bill aktif milikmu dan riwayat order sejak kamu login." : "Open bill aktif milikmu dan riwayat transaksi hari ini."}
                     </p>
                 </div>
                 <Link href="/pos" className="moka-btn-secondary">
@@ -106,7 +86,7 @@ export default async function PosHistoryPage({ searchParams }: PosHistoryPagePro
                 <div className="space-y-3 p-3 md:hidden">
                     {pagedOrders.length === 0 ? (
                         <div className="rounded-2xl border border-moka-line bg-[#151515] px-4 py-8 text-center text-sm text-moka-muted">
-                            Belum ada transaksi hari ini.
+                            {user.role === "kasir" ? "Belum ada order pada sesi login ini." : "Belum ada transaksi hari ini."}
                         </div>
                     ) : (
                         pagedOrders.map((order) => (

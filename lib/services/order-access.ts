@@ -34,8 +34,25 @@ export function resolveCashierSessionStart(user: SessionUser): Date | null {
 }
 
 export function isOrderInActiveCashierSession(user: SessionUser, order: { orderedAt: Date }): boolean {
+    return isOrderVisibleInCashierHistory(user, {
+        orderedAt: order.orderedAt,
+        status: OrderStatus.PAID,
+    });
+}
+
+export function isOrderVisibleInCashierHistory(
+    user: SessionUser,
+    order: {
+        orderedAt: Date;
+        status: OrderStatus;
+    },
+): boolean {
     const sessionStart = resolveCashierSessionStart(user);
     if (!sessionStart) {
+        return true;
+    }
+
+    if (order.status === OrderStatus.OPEN_BILL || order.status === OrderStatus.WAITING) {
         return true;
     }
 

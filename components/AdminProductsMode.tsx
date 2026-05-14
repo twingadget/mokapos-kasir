@@ -43,6 +43,18 @@ function renderStatusBadge(isActive: boolean): ReactNode {
     return <Badge variant={isActive ? "success" : "warning"}>{isActive ? "Aktif" : "Nonaktif"}</Badge>;
 }
 
+function resolveProductImageSrc(imagePath: string | null): string | null {
+    if (!imagePath) {
+        return null;
+    }
+
+    if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("data:")) {
+        return imagePath;
+    }
+
+    return `/${imagePath.replace(/^\/+/, "")}`;
+}
+
 export default function AdminProductsMode({ products, canManage, search, perPage }: AdminProductsModeProps) {
     const [viewMode, setViewMode] = useState<"table" | "card">("table");
 
@@ -194,7 +206,7 @@ export default function AdminProductsMode({ products, canManage, search, perPage
                                 </div>
 
                                 {product.imagePath ? (
-                                    <img src={`/${product.imagePath.replace(/^\/+/, "")}`} alt={product.name} className="mb-3 h-72 w-full rounded-xl object-cover object-center" />
+                                    <img src={resolveProductImageSrc(product.imagePath) ?? ""} alt={product.name} className="mb-3 h-72 w-full rounded-xl object-cover object-center" />
                                 ) : (
                                     <div className="mb-3 flex h-72 items-center justify-center rounded-xl border border-dashed border-moka-line bg-moka-soft/60 text-sm text-moka-muted">
                                         Belum ada gambar

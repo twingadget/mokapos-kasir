@@ -44,26 +44,32 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const image = formData.get("image");
-    const imagePath = await saveUploadedProductImage(image instanceof File ? image : null);
+    let imagePath: string | null = null;
+    try {
+        imagePath = await saveUploadedProductImage(image instanceof File ? image : null);
 
-    await prisma.$transaction(async (tx) => {
-        const product = await tx.product.create({
-            data: {
-                name: payload.name,
-                sku: payload.sku,
-                categoryId: payload.categoryId,
-                price: payload.price,
-                costPrice: payload.costPrice,
-                isActive: payload.isActive,
-                trackStock: payload.trackStock,
-                stockQty: payload.stockQty,
-                imagePath,
-            },
-            select: { id: true },
+        await prisma.$transaction(async (tx) => {
+            const product = await tx.product.create({
+                data: {
+                    name: payload.name,
+                    sku: payload.sku,
+                    categoryId: payload.categoryId,
+                    price: payload.price,
+                    costPrice: payload.costPrice,
+                    isActive: payload.isActive,
+                    trackStock: payload.trackStock,
+                    stockQty: payload.stockQty,
+                    imagePath,
+                },
+                select: { id: true },
+            });
+
+            await syncProductVariants(tx, product.id, payload.variants);
         });
-
-        await syncProductVariants(tx, product.id, payload.variants);
-    });
+    } catch {
+        const response = NextResponse.redirect(new URL("/admin/products/new", request.url), { status: 303 });
+        return withFlash(response, { type: "error", message: "Simpan produk gagal. Coba lagi atau gunakan gambar yang lebih ringan." });
+    }
 
     const response = NextResponse.redirect(new URL("/admin/products", request.url), { status: 303 });
     return withFlash(response, { type: "success", message: "Berhasil menyimpan produk." });

@@ -45,11 +45,23 @@ function toVariantRow(variant: VariantInput): VariantInput {
     };
 }
 
+function resolveImagePreviewSrc(imagePath: string | null | undefined): string | null {
+    if (!imagePath) {
+        return null;
+    }
+
+    if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("data:")) {
+        return imagePath;
+    }
+
+    return `/${imagePath.replace(/^\/+/, "")}`;
+}
+
 export default function ProductForm({ action, categories, submitLabel, initial }: ProductFormProps) {
     const [variants, setVariants] = useState<VariantInput[]>(
         initial?.variants && initial.variants.length > 0 ? initial.variants.map((variant) => toVariantRow(variant)) : [],
     );
-    const [imagePreview, setImagePreview] = useState<string | null>(initial?.imagePath ? `/${initial.imagePath.replace(/^\/+/, "")}` : null);
+    const [imagePreview, setImagePreview] = useState<string | null>(resolveImagePreviewSrc(initial?.imagePath));
 
     const variantsJson = useMemo(() => JSON.stringify(variants), [variants]);
 

@@ -5,7 +5,7 @@ import AppShell from "@/components/AppShell";
 import Badge from "@/components/Badge";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
-import { canViewOrder, displayInvoice, isOrderInActiveCashierSession } from "@/lib/services/order-access";
+import { canViewOrder, displayInvoice, isOrderVisibleInCashierHistory } from "@/lib/services/order-access";
 import { requireServerSessionUser } from "@/lib/server-auth";
 
 type PosOrderDetailPageProps = {
@@ -55,7 +55,7 @@ export default async function PosOrderDetailPage({ params }: PosOrderDetailPageP
         redirect("/pos/history");
     }
 
-    if (!isOrderInActiveCashierSession(user, order)) {
+    if (!isOrderVisibleInCashierHistory(user, order)) {
         redirect("/pos/history");
     }
 

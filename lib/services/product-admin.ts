@@ -114,6 +114,12 @@ function normalizeImageExtension(fileName: string, mimeType: string): string {
     return ".jpg";
 }
 
+async function toInlineProductImage(file: File, mimeType: string): Promise<string> {
+    const arrayBuffer = await file.arrayBuffer();
+    const base64 = Buffer.from(arrayBuffer).toString("base64");
+    return `data:${mimeType};base64,${base64}`;
+}
+
 export async function saveUploadedProductImage(file: File | null): Promise<string | null> {
     if (!file || file.size === 0) {
         return null;
@@ -126,14 +132,22 @@ export async function saveUploadedProductImage(file: File | null): Promise<strin
 
     const ext = normalizeImageExtension(file.name, mimeType);
     const directory = path.join(process.cwd(), "public", "products");
-    await mkdir(directory, { recursive: true });
+    if (process.env.VERCEL) {
+        return toInlineProductImage(file, mimeType || "image/jpeg");
+    }
 
-    const fileName = `${randomUUID()}${ext}`;
-    const fullPath = path.join(directory, fileName);
-    const arrayBuffer = await file.arrayBuffer();
-    await writeFile(fullPath, Buffer.from(arrayBuffer));
+    try {
+        await mkdir(directory, { recursive: true });
 
-    return `products/${fileName}`;
+        const fileName = `${randomUUID()}${ext}`;
+        const fullPath = path.join(directory, fileName);
+        const arrayBuffer = await file.arrayBuffer();
+        await writeFile(fullPath, Buffer.from(arrayBuffer));
+
+        return `products/${fileName}`;
+    } catch {
+        return toInlineProductImage(file, mimeType || "image/jpeg");
+    }
 }
 
 export async function deleteLocalProductImage(imagePath: string | null): Promise<void> {

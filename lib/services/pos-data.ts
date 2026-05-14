@@ -9,7 +9,7 @@ export function resolveProductImageUrl(imagePath: string | null): string | null 
         return null;
     }
 
-    if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("data:")) {
         return imagePath;
     }
 
@@ -96,7 +96,6 @@ export async function getPosBootstrapData(params: {
     mode: "kasir" | "waiter";
     resumeOpenBillId?: number | null;
     resumeWaiterOrderId?: number | null;
-    sessionStartedAt?: Date | null;
 }): Promise<{
     categories: Array<{ id: number; name: string }>;
     products: Array<{
@@ -188,7 +187,6 @@ export async function getPosBootstrapData(params: {
                   where: {
                       status: OrderStatus.OPEN_BILL,
                       userId: params.userId,
-                      ...(params.sessionStartedAt ? { orderedAt: { gte: params.sessionStartedAt } } : {}),
                   },
                   orderBy: { updatedAt: "desc" },
                   take: 20,
@@ -229,7 +227,6 @@ export async function getPosBootstrapData(params: {
                 id: params.resumeOpenBillId,
                 status: OrderStatus.OPEN_BILL,
                 userId: params.userId,
-                ...(params.sessionStartedAt ? { orderedAt: { gte: params.sessionStartedAt } } : {}),
             },
             select: {
                 id: true,

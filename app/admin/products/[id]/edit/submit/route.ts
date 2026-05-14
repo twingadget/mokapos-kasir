@@ -67,26 +67,32 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
     }
 
     const image = formData.get("image");
-    const newImagePath = await saveUploadedProductImage(image instanceof File ? image : null);
+    let newImagePath: string | null = null;
+    try {
+        newImagePath = await saveUploadedProductImage(image instanceof File ? image : null);
 
-    await prisma.$transaction(async (tx) => {
-        await tx.product.update({
-            where: { id },
-            data: {
-                name: payload.name,
-                sku: payload.sku,
-                categoryId: payload.categoryId,
-                price: payload.price,
-                costPrice: payload.costPrice,
-                isActive: payload.isActive,
-                trackStock: payload.trackStock,
-                stockQty: payload.stockQty,
-                imagePath: newImagePath ?? current.imagePath,
-            },
+        await prisma.$transaction(async (tx) => {
+            await tx.product.update({
+                where: { id },
+                data: {
+                    name: payload.name,
+                    sku: payload.sku,
+                    categoryId: payload.categoryId,
+                    price: payload.price,
+                    costPrice: payload.costPrice,
+                    isActive: payload.isActive,
+                    trackStock: payload.trackStock,
+                    stockQty: payload.stockQty,
+                    imagePath: newImagePath ?? current.imagePath,
+                },
+            });
+
+            await syncProductVariants(tx, id, payload.variants);
         });
-
-        await syncProductVariants(tx, id, payload.variants);
-    });
+    } catch {
+        const response = NextResponse.redirect(new URL(`/admin/products/${id}/edit`, request.url), { status: 303 });
+        return withFlash(response, { type: "error", message: "Simpan perubahan gagal. Coba lagi atau gunakan gambar yang lebih ringan." });
+    }
 
     if (newImagePath && current.imagePath) {
         await deleteLocalProductImage(current.imagePath);
